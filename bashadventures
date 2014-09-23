@@ -1,0 +1,3020 @@
+#! /bin/bash
+# Bash Adventures, a text based adventure game.
+if [ $1 ]; then
+	if [ $1 = "--saves" ] || [ $1 = "-s" ]; then
+		if [ $2 ]; then
+			if [ -d $2 ]; then
+				SAVES="$2"
+			else
+				echo "That directory does not exist."
+				exit
+			fi
+		else
+			echo "The option --saves must be followed by a directory."
+			exit
+		fi
+	else
+		SAVES="$HOME/.bashadventures"
+	fi
+else
+	SAVES="$HOME/.bashadventures"
+fi
+
+function start {
+    clear
+    echo
+    echo
+    echo
+    echo
+    echo
+    cat images/sword
+    sleep .2
+    clear
+    echo
+    echo
+    echo
+    echo
+    cat images/sword
+    sleep .2
+    clear
+    echo
+    echo
+    echo
+    cat images/sword
+    sleep .2
+    clear
+    echo
+    echo
+    cat images/sword
+    sleep .2
+    clear
+    echo
+    cat images/sword
+    sleep .2
+    clear
+    cat images/sword
+    sleep .2
+    read -t 0.1 -n 1000
+}
+
+function not_done {
+    clear
+    cat images/sword
+    echo -e "                        \033[1;31mThis feature is not"
+    echo -e "                        currently implemented"
+    echo -e "                        press enter to go"
+    echo -e "                        back to the menu.\033[0m"
+    read -s ENTER
+    XCORD=$(sed -n '/place/p' $SAVES/$NAME | cut -f 3 -d ' ')
+	YCORD=$(sed -n '/place/p' $SAVES/$NAME | cut -f 4 -d ' ')
+	$(sed -n '/place/p' $SAVES/$NAME | cut -f 2 -d ' ')
+}
+
+function rag_tunic {
+    TUNIC="Dirty rags made of wool."
+    TUNIC_HP="0"
+    TUNIC_MP="0"
+    TUNIC_AC="0"
+    TUNIC_EFFECT="Nothing"
+}
+
+function rag_pants {
+    PANTS="Dirty rags made of wool."
+    PANTS_HP="0"
+    PANTS_MP="0"
+    PANTS_AC="0"
+    PANTS_EFFECT="Nothing"
+}
+
+function cave_cliff {
+	clear
+	cat images/cave_cliff
+	echo
+	echo
+	echo This cliff is too high for you to reach the ledge.
+	echo Maybe there is another way out.
+}
+
+function forest_trail_cave_night_1_move {
+    clear
+	sed -i s/.*place.*/"place forest_trail_cave_night_1_move $XCORD $YCORD"/g ~/.bashadventures/$NAME
+    function light {
+        function spaces {
+        COUNT_SPACES=1
+        while [ $COUNT_SPACES -lt $(($XCORD - 2)) ]; do
+            echo -n " "
+            COUNT_SPACES=$(($COUNT_SPACES + 1))
+        done
+    }
+        function line {
+        Y=$(sed -n "$Y"p places/forest_trail_cave)
+        X=$(($XCORD - 3 ))
+        echo "${Y:X:7}"
+    }    
+    COUNT_TOP=1
+    while [ $COUNT_TOP -lt $(($YCORD - 3)) ]; do
+        echo " "
+        COUNT_TOP=$(($COUNT_TOP + 1))
+    done
+    Y=$(($YCORD - 2))
+    spaces
+    line
+    Y=$(($YCORD - 1))
+    spaces
+    line
+    Y=$YCORD
+    spaces
+    Y=$(sed -n "$Y"p places/forest_trail_cave)
+    X=$(($XCORD - 3 ))
+    echo -n "${Y:X:3}"
+    echo -n \@
+    Y=$YCORD
+    Y=$(sed -n "$Y"p places/forest_trail_cave)
+    X=$(($XCORD + 1 ))
+    echo "${Y:X:3}"
+    Y=$(($YCORD + 1))
+    spaces
+    line
+    Y=$(($YCORD + 2))
+    spaces
+    line
+    COUNT_BOTTOM=1
+    while [ $COUNT_BOTTOM -lt $((23 - $YCORD)) ]; do
+        echo " "
+        COUNT_BOTTOM=$(($COUNT_BOTTOM + 1))
+    done
+}
+    light
+	echo YCord: $YCORD #debug
+	echo XCord: $XCORD #debug
+	read -s -n 1 MOVE
+    if [ $MOVE ]; then
+        case $MOVE in
+		a)
+            case $YCORD in
+            3)
+                if [ $XCORD -eq 16 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            4)
+                if [ $XCORD -eq 3 ] || [ $XCORD -eq 16 ] || [ $XCORD -eq 30 ] || [ $XCORD -eq 40 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            5)
+                if [ $XCORD -eq 3 ] || [ $XCORD -eq 8 ] || [ $XCORD -eq 16 ] || [ $XCORD -eq 30 ] || [ $XCORD -eq 40 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            6)
+                if [ $XCORD -eq 3 ] || [ $XCORD -eq 16 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 38 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            7)
+                if [ $XCORD -eq 6 ] || [ $XCORD -eq 19 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 38 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            8)
+                if [ $XCORD -eq 6 ] || [ $XCORD -eq 19 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 38 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            9)
+                if [ $XCORD -eq 3 ] || [ $XCORD -eq 19 ] || [ $XCORD -eq 29 ] || [ $XCORD -eq 38 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            10)
+                if [ $XCORD -eq 3 ] || [ $XCORD -eq 12 ] || [ $XCORD -eq 29 ] || [ $XCORD -eq 38 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            11)
+                if [ $XCORD -eq 3 ] || [ $XCORD -eq 12 ] || [ $XCORD -eq 29 ] || [ $XCORD -eq 38 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;   
+            12)
+                if [ $XCORD -eq 3 ] || [ $XCORD -eq 33 ] || [ $XCORD -eq 38 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            13)
+                if [ $XCORD -eq 33 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            14)
+                if [ $XCORD -eq 18 ] || [ $XCORD -eq 36 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            15)
+                if [ $XCORD -eq 18 ] || [ $XCORD -eq 36 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            16)
+                if [ $XCORD -eq 18 ] || [ $XCORD -eq 42 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            17)
+                if [ $XCORD -eq 6 ] || [ $XCORD -eq 18 ] || [ $XCORD -eq 29 ] || [ $XCORD -eq 42 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            18)
+                if [ $XCORD -eq 6 ] || [ $XCORD -eq 29 ] || [ $XCORD -eq 42 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            19)
+                if [ $XCORD -eq 3 ] || [ $XCORD -eq 29 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            20)
+                if [ $XCORD -eq 3 ] || [ $XCORD -eq 33 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            21)
+                if [ $XCORD -eq 8 ] || [ $XCORD -eq 33 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            22)
+                if [ $XCORD -eq 8 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            23)
+                if [ $XCORD -eq 8 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            esac;;
+        w)
+            case $YCORD in
+            3)
+                forest_trail_cave_night_1_move;;
+            4)
+                if [ $XCORD -ge 3 ] && [ $XCORD -le 11 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -ge 40 ] && [ $XCORD -le 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            5)
+                YCORD=$(($YCORD - 1))
+                forest_trail_cave_night_1_move;;
+            6)
+                if [ $XCORD -eq 6 ] || [ $XCORD -eq 7 ] || [ $XCORD -eq 38 ] || [ $XCORD -eq 39 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -ge 20 ] && [ $XCORD -le 29 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            7)
+                YCORD=$(($YCORD - 1))
+                forest_trail_cave_night_1_move;;
+            8)
+                YCORD=$(($YCORD - 1))
+                forest_trail_cave_night_1_move;;
+            9)
+                if [ $XCORD -ge 3 ] && [ $XCORD -le 5 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -ge 21 ] && [ $XCORD -le 25]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -eq 31 ] || [ $XCORD -eq 32 ] || [ $XCORD -eq 45 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            10)
+                if [ $XCORD -ge 12 ] && [ $XCORD -le 18 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -ge 33 ] && [ $XCORD -le 35 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            11)
+                YCORD=$(($YCORD - 1))
+                forest_trail_cave_night_1_move;;  
+            12)
+                if [ $XCORD -ge 9 ] && [ $XCORD -le 11 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            13)
+                if [ $XCORD -eq 36 ] || [ $XCORD -eq 37 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            14)
+                if [ $XCORD -ge 18 ] && [ $XCORD -le 26 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            15)
+                if [ $XCORD -ge 38 ] && [ $XCORD -lt 44 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            16)
+                if [ $XCORD -ge 27 ] && [ $XCORD -le 30 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            17)
+                if [ $XCORD -ge 6 ] && [ $XCORD -le 9 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            18)
+                if [ $XCORD -ge 44 ] && [ $XCORD -le 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            19)
+                if [ $XCORD -ge 3 ] && [ $XCORD -le 5 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -ge 31 ] && [ $XCORD -le 34 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            20)
+                YCORD=$(($YCORD - 1))
+                forest_trail_cave_night_1_move;;
+            21)
+                if [ $XCORD -ge 35 ] && [ $XCORD -le 44 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            22)
+                YCORD=$(($YCORD - 1))
+                forest_trail_cave_night_1_move;;
+            23)
+                if [ $XCORD -ge 10 ] && [ $XCORD -le 44 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD - 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            esac;;
+        s)
+			case $YCORD in
+            3)
+                if [ $XCORD -ge 20 ] && [ $XCORD -le 29 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            4)
+                if [ $XCORD -eq 6 ] || [ $XCORD -eq 7 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            5)
+                YCORD=$(($YCORD + 1))
+                forest_trail_cave_night_1_move;;
+            6)
+                if [ $XCORD -ge 3 ] && [ $XCORD -le 5 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -gt 9 ] && [ $XCORD -le 11 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -ge 16 ] && [ $XCORD -le 18 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -eq 31 ] || [ $XCORD -eq 32 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -ge 40 ] && [ $XCORD -le 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            7)
+                if [ $XCORD -ge 21 ] && [ $XCORD -le 23 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            8)
+                if [ $XCORD -eq 27 ] || [ $XCORD -eq 28 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            9)
+                YCORD=$(($YCORD + 1))
+                forest_trail_cave_night_1_move;;
+            10)
+                if [ $XCORD -ge 15 ] && [ $XCORD -le 25 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            11)
+                if [ $XCORD -ge 29 ] && [ $XCORD -le 32 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            12)
+                if [ $XCORD -ge 3 ] && [ $XCORD -le 14 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            13)
+                if [ $XCORD -ge 33 ] && [ $XCORD -le 35 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -eq 38 ] || [ $XCORD -eq 39 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            14)
+                YCORD=$(($YCORD + 1))
+                forest_trail_cave_night_1_move;;
+            15)
+                if [ $XCORD -ge 36 ] && [ $XCORD -le 41 ]; then
+                    forest_trail_cave_night_1_move
+                elif [ $XCORD -ge 44 ] && [ $XCORD -le 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            16)
+                if [ $XCORD -eq 27 ] || [ $XCORD -eq 28 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            17)
+                if [ $XCORD -ge 18 ] && [ $XCORD -le 26 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            18)
+                if [ $XCORD -ge 42 ] && [ $XCORD -le 44 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            19)
+                if [ $XCORD -ge 29 ] && [ $XCORD -le 32 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            20)
+                if [ $XCORD -ge 3 ] && [ $XCORD -le 7 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            21)
+                if [ $XCORD -ge 33 ] && [ $XCORD -le 44 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            22)
+                YCORD=$(($YCORD + 1))
+                forest_trail_cave_night_1_move;;
+            23)
+                if [ $XCORD -ge 23 ] && [ $XCORD -le 26 ]; then
+					cave_cliff
+                    forest_trail_cave_night_1_move
+                else
+                    forest_trail_cave_night_1_move
+                fi;;
+            esac;; 
+        d)
+            case $YCORD in
+            3)
+                if [ $XCORD -eq 33 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            4)
+                if [ $XCORD -eq 11 ] || [ $XCORD -eq 19 ] || [ $XCORD -eq 33 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            5)
+                if [ $XCORD -eq 5 ] || [ $XCORD -eq 11 ] || [ $XCORD -eq 19 ] || [ $XCORD -eq 33 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            6)
+                if [ $XCORD -eq 11 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 32 ] || [ $XCORD -eq 45 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            7)
+                if [ $XCORD -eq 8 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 30 ] || [ $XCORD -eq 39 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            8)
+                if [ $XCORD -eq 8 ] || [ $XCORD -eq 20 ] || [ $XCORD -eq 30 ] || [ $XCORD -eq 39 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            9)
+                if [ $XCORD -eq 8 ] || [ $XCORD -eq 25 ] || [ $XCORD -eq 32 ] || [ $XCORD -eq 39 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            10)
+                if [ $XCORD -eq 8 ] || [ $XCORD -eq 25 ] || [ $XCORD -eq 35 ] || [ $XCORD -eq 39 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            11)
+                if [ $XCORD -eq 8 ] || [ $XCORD -eq 14 ] || [ $XCORD -eq 35 ] || [ $XCORD -eq 39 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            12)
+                if [ $XCORD -eq 14 ] || [ $XCORD -eq 35 ] || [ $XCORD -eq 39 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            13)
+                if [ $XCORD -eq 39 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            14)
+                if [ $XCORD -eq 26 ] || [ $XCORD -eq 37 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            15)
+                if [ $XCORD -eq 26 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            16)
+                if [ $XCORD -eq 30 ] || [ $XCORD -eq 43 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            17)
+                if [ $XCORD -eq 9 ] || [ $XCORD -eq 26 ] || [ $XCORD -eq 30 ] || [ $XCORD -eq 43 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            18)
+                if [ $XCORD -eq 9 ] || [ $XCORD -eq 30 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            19)
+                if [ $XCORD -eq 9 ] || [ $XCORD -eq 34 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            20)
+                if [ $XCORD -eq 9 ] || [ $XCORD -eq 34 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            21)
+                if [ $XCORD -eq 9 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            22)
+                if [ $XCORD -eq 9 ] || [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            23)
+                if [ $XCORD -eq 46 ]; then
+                    forest_trail_cave_night_1_move
+                else
+                    XCORD=$(($XCORD + 1))
+                    forest_trail_cave_night_1_move
+                fi;;
+            esac;;
+        m)
+            menu_new;;
+        *)
+            forest_trail_cave_night_1_move;;
+        esac
+    else
+        forest_trail_cave_night_1_move
+    fi
+}
+forest_trail_cave_night_1_move
+
+
+function forest_trail_sign {
+    clear
+    cat images/forest_trail_sign
+    read -s ENTER
+}
+
+function forest_trail_night_1_spider {
+    clear
+    cat images/spider
+    echo You see a large and very dangerous looking spider.
+    echo Without a weapon you dare not get any closer.
+    read -s ENTER
+}
+
+function forest_trail_night_1_move {
+    clear
+    sed -i s/.*place.*/"place forest_trail_night_1_move $XCORD $YCORD"/g ~/.bashadventures/$NAME
+    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+    -e "10 s/^(.{43}).(.*)/\1\ж\2/" \
+    -e "4 s/^(.{48}).(.*)/\1\ж\2/" \
+    -e "5 s/^(.{13}).(.*)/\1\ж\2/" \
+    -e "12 s/^(.{26}).(.*)/\1\ж\2/" places/forest_trail
+	echo
+	echo YCord: $YCORD #debug
+	echo XCord: $XCORD #debug
+	read -s -n 1 MOVE
+    if [ $MOVE ]; then
+        case $MOVE in
+        a)
+            function forest_trail_night_1_move_a {
+				case $YCORD in
+				2)  
+                    if [ $XCORD -eq 5 ]; then
+                    forest_trail_night_1_move
+                    else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				3)  
+                    if [ $XCORD -eq 3 ] || [ $XCORD -eq 24 ] || [ $XCORD -eq 41 ] || [ $XCORD -eq 46 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				4)
+                    if [ $XCORD -eq 2 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 40 ] || [ $XCORD -eq 48 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				5)
+					if [ $XCORD -eq 1 ] ||[ $XCORD -eq 7 ] || [ $XCORD -eq 23 ] ||  $XCORD -eq 37 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				6)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 8 ] || [ $XCORD -eq 38 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					elif [ $XCORD -eq 21 ]; then
+						forest_trail_night_1_spider
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				7)
+					if [ $XCORD -eq 2 ] || [ $XCORD -eq 39 ] || [ $XCORD -eq 50 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				8)
+					if [ $XCORD -eq 3 ] || [ $XCORD -eq 28 ] || [ $XCORD -eq 51 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				9)
+					if [ $XCORD -eq 4 ]; then
+                        forest_trail_sign
+						forest_trail_night_1_move
+					elif [ $XCORD -eq 51 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				10)
+					if [ $XCORD -eq 0 ]; then
+                        $YCORD=19
+                        $XCORD=57
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				11)
+					if [ $XCORD -eq 10 ]; then
+                        forest_trail_sign
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				12)
+					if [ $XCORD -eq 8 ] || [ $XCORD -eq 22 ] || [ $XCORD -eq 42 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				13)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 22 ] || [ $XCORD -eq 41 ] || [ $XCORD -eq 47 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				14)
+					if [ $XCORD -eq 10 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 42 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				15)
+					if [ $XCORD -eq 11 ] || [ $XCORD -eq 25 ] || [ $XCORD -eq 46 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				16)
+					if [ $XCORD -eq 12 ] || [ $XCORD -eq 47 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				17)
+					if [ $XCORD -eq 27 ] || [ $XCORD -eq 48 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				18)
+					if [ $XCORD -eq 28 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				19)
+					if [ $XCORD -eq 29 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						forest_trail_night_1_move
+					fi;
+				esac
+			}
+			forest_trail_night_1_move_a;;
+        w)
+            function forest_trail_night_1_move_w {
+				case $YCORD in
+                2)
+					forest_trail_night_1_move;;
+				3)
+					if [ $XCORD -eq 3 ] || [ $XCORD -eq 4 ] || [ $XCORD -eq 48 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				4)
+					if [ $XCORD -eq 2 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 40 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				5)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 50 ]; then
+						forest_trail_night_1_move
+					elif [ $XCORD -ge 10 ] && [ $XCORD -le 20 ]; then
+						forest_trail_night_1_move
+                    elif [ $XCORD -ge 37 ] && [ $XCORD -le 39 ]; then
+                        forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				6)
+					if [ $XCORD -eq 21 ] || [ $XCORD -eq 22 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				7)
+                    if [ $XCORD -eq 4 ] || [ $XCORD -eq 51 ]; then
+                        forest_trail_night_1_move
+                    else
+                        YCORD=$(($YCORD - 1))
+                        forest_trail_night_1_move
+                    fi;;
+				8)
+					if [ $XCORD -ge 28 ] && [ $XCORD -le 31 ]; then
+                        forest_trail_night_1_move
+                    elif [ $XCORD -eq 32 ] || [ $XCORD -eq 33 ]; then
+                        YCORD=23
+                        XCORD=25
+                        forest_trail_cave_night_1_move
+                    elif [ $XCORD -ge 34 ] && [ $XCORD -le 38 ]; then
+                        forest_trail_night_1_move
+                    elif [ $XCORD -eq 52 ]; then
+                        forest_trail_night_1_move
+                    else
+                        YCORD=$(($YCORD - 1))
+                        forest_trail_night_1_move
+                    fi;;
+				9)
+					if [ $XCORD -eq 5 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				10)
+					if [ $XCORD -eq 3 ]; then
+						forest_trail_sign
+						forest_trail_night_1_move
+					elif [ $XCORD -eq 4 ] || [ $XCORD -eq 5 ] || [ $XCORD -eq 51 ] || [ $XCORD -eq 52 ]; then
+						YCORD=$(($YCORD - 1))
+                        forest_trail_night_1_move
+					else
+						forest_trail_night_1_move
+					fi;;
+				11)
+					YCORD=$(($YCORD - 1))
+				    forest_trail_night_1_move;;
+				12)
+					if [ $XCORD -eq 9 ]; then
+						forest_trail_sign
+						forest_trail_night_1_move
+					elif [ $XCORD -eq 10 ] || [ $XCORD -eq 11 ]; then
+                        YCORD=$(($YCORD - 1))
+                        forest_trail_night_1_move
+                    else
+                        forest_trail_night_1_move
+					fi;;
+				13)
+					if [ $XCORD -eq 41 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				14)
+                    if [ $XCORD -eq 12 ]; then
+                        forest_trail_night_1_move
+                    elif [ $XCORD -ge 44 ] && [ $XCORD -le 46 ]; then
+                        forest_trail_night_1_move
+                    else
+                        YCORD=$(($YCORD - 1))
+                        forest_trail_night_1_move
+                    fi;;
+				15)
+                    if [ $XCORD -eq 13 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						forest_trail_night_1_move
+					fi;; 
+				16)
+					if [ $XCORD -ge 14 ] && [ $XCORD -le 24 ]; then
+                        forest_trail_night_1_move
+                    elif [ $XCORD -eq 28 ] || [ $XCORD -eq 49 ]; then
+                        forest_trail_night_1_move
+                    elif [ $XCORD -ge 25 ] && [ $XCORD -le 27 ]; then
+						forest_trail_night_1_spider
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				17)
+                    if [ $XCORD -eq 29 ] || [ $XCORD -eq 50 ] || [ $XCORD -eq 51 ]; then
+                        forest_trail_night_1_move
+                    else
+                        YCORD=$(($YCORD - 1))
+                        forest_trail_night_1_move
+                    fi;;
+				18)
+                    if [ $XCORD -eq 30 ]; then
+                        forest_trail_night_1_move
+                    else
+                        YCORD=$(($YCORD - 1))
+                        forest_trail_night_1_move
+                    fi;;
+				19)
+					if [ $XCORD -ge 31 ] && [ $XCORD -le 48 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						forest_trail_night_1_move
+					fi;;
+				esac
+            }
+			forest_trail_night_1_move_w;;
+        s)
+			function forest_trail_night_1_move_s {
+				case $YCORD in
+                2)
+					if [ $XCORD -ge 7 ] && [ $XCORD -le 23 ]; then
+						forest_trail_night_1_move
+					elif [ $XCORD -ge 27 ] && [ $XCORD -le 40 ]; then
+						forest_trail_night_1_move
+                    elif [ $XCORD -eq 44 ] || [ $XCORD -eq 45 ]; then
+                        forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				3)
+					if [ $XCORD -eq 6 ] || [ $XCORD -eq 46 ] || [ $XCORD -eq 47 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+                4)
+                    if [ $XCORD -eq 5 ] || [ $XCORD -eq 26 ] || [ $XCORD -eq 42 ] || [ $XCORD -eq 43 ] || [ $XCORD -eq 48 ]; then
+                        forest_trail_night_1_move
+                    else
+                        YCORD=$(($YCORD + 1))
+                        forest_trail_night_1_move
+                    fi;;
+				5)
+					if [ $XCORD -eq 4 ] || [ $XCORD -eq 7 ] || [ $XCORD -eq 25 ] || [ $XCORD -eq 37 ] || [ $XCORD -eq 41 ]; then
+                        forest_trail_night_1_move
+                    else
+                        YCORD=$(($YCORD + 1))
+                        forest_trail_night_1_move
+                    fi;;
+				6)
+					if [ $XCORD -ge 8 ] && [ $XCORD -le 24 ]; then
+						forest_trail_night_1_move
+                    elif [ $XCORD -eq 1 ] || [ $XCORD -eq 38 ] || [ $XCORD -eq 49 ]; then
+                        forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				7)
+					if [ $XCORD -eq 2 ] || [ $XCORD -eq 50 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				8)
+					if [ $XCORD -eq 3 ]; then
+						forest_trail_sign
+						forest_trail_night_1_move
+                    elif [ $XCORD -ge 28 ] && [ $XCORD -le 40 ]; then
+                        forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				9)
+                    YCORD=$(($YCORD + 1))
+                    forest_trail_night_1_move;;
+				10)
+					if [ $XCORD -eq 9 ]; then
+						forest_trail_sign
+						forest_trail_night_1_move
+					elif [ $XCORD -ge 10 ] && [ $XCORD -le 12 ]; then
+						YCORD=$(($YCORD + 1))
+                        forest_trail_night_1_move
+					else
+						forest_trail_night_1_move
+					fi;;
+				11)
+					if [ $XCORD -eq 12 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				12)
+                    if [ $XCORD -eq 8 ] || [ $XCORD -eq 30 ]; then
+                        forest_trail_night_1_move
+                    elif [ $XCORD -ge 44 ] && [ $XCORD -le 46 ]; then
+                        forest_trail_night_1_move
+                    else
+                        YCORD=$(($YCORD + 1))
+                        forest_trail_night_1_move
+                    fi;;
+				13)
+                    if [ $XCORD -eq 9 ] || [ $XCORD -eq 22 ] || [ $XCORD -eq 29 ] || [ $XCORD -eq 41 ]; then
+                        forest_trail_night_1_move
+                    else
+                        YCORD=$(($YCORD + 1))
+                        forest_trail_night_1_move
+                    fi;;
+				14)
+					if [ $XCORD -eq 10 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 24 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					elif [ $XCORD -ge 42 ] && [ $XCORD -le 45 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				15)
+					if [ $XCORD -eq 11 ] || [ $XCORD -eq 46 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				16)
+					if [ $XCORD -ge 12 ] && [ $XCORD -le 26 ]; then
+						forest_trail_night_1_move
+                    elif [ $XCORD -eq 47 ]; then
+                        forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				17)
+					if [ $XCORD -eq 27 ] || [ $XCORD -eq 48 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				18)
+					if [ $XCORD -eq 28 ] || [ $XCORD -eq 61 ]; then
+						forest_trail_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				19)
+                    forest_trail_night_1_move;;
+				esac
+			}
+			forest_trail_night_1_move_s;;
+        d)
+			function forest_trail_night_1_move_d {
+				case $YCORD in
+                2)
+					if [ $XCORD -eq 45 ]; then
+                        forest_trail_night_1_spider
+						forest_trail_night_1_move
+					elif [ $XCORD -eq 47 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				3)
+					if [ $XCORD -eq 6 ] || [ $XCORD -eq 26 ] || [ $XCORD -eq 43 ] || [ $XCORD -eq 48 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				4)
+					if [ $XCORD -eq 5 ] || [ $XCORD -eq 26 ] || [ $XORD -eq 43 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				5)
+					if [ $XCORD -eq 4 ] || [ $XCORD -eq 20 ] || [ $XCORD -eq 25 ] || [ $XCORD -eq 41 ] || [ $XCORD -eq 50 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				6)
+					if [ $XCORD -eq 3 ] || [ $XCORD -eq 24 ] || [ $XCORD -eq 40 ] || [ $XCORD -eq 50]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				7)
+					if [ $XCORD -eq 4 ] || [ $XCORD -eq 40 ] || [ $XCORD -eq 51 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				8)
+					if [ $XCORD -eq 4 ] || [ $XCORD -eq 40 ] || [ $XCORD -eq 52]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				9)
+					if [ $XCORD -eq 5 ] || [ $XCORD -eq 52 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				10)
+					if [ $XCORD -eq 27 ]; then
+                        forest_trail_night_1_spider
+						forest_trail_night_1_move
+					elif [ $XCORD -eq 54 ]; then
+						not_done
+                        #next map
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				11)
+					if [ $XCORD -eq 12 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				12)
+					if [ $XCORD -eq 11 ] || [ $XCORD -eq 30 ] || [ $XCORD -eq 48 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				13)
+					if [ $XCORD -eq 11 ] || [ $XCORD -eq 29 ] || [ $XCORD -eq 43 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				14)
+					if [ $XCORD -eq 12 ] || [ $XCORD -eq 28 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				15)
+					if [ $XCORD -eq 13 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 48 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				16)
+					if [ $XCORD -eq 28 ] || [ $XCORD -eq 49 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				17)
+					if [ $XCORD -eq 29 ] || [ $XCORD -eq 51 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				18)
+					if [ $XCORD -eq 30 ] || [ $XCORD -eq 51 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				19)
+					if [ $XCORD -eq 50 ]; then
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						forest_trail_night_1_move
+					fi;;
+				esac
+			}
+			forest_trail_night_1_move_d;;
+        m)
+            menu_new;;
+        *)
+            forest_trail_night_1_move;;
+        esac
+    else
+        forest_trail_night_1_move
+    fi
+}
+
+
+function brookshire_night_watch_block_west_1 {
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '14s/^(.{1}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '13s/^(.{1}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	cat images/night_watch
+	echo Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"
+	read -s ENTER
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '13s/^(.{1}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '14s/^(.{1}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	read -t 0.1 -n 1000
+}
+
+function brookshire_night_watch_block_west_2 {
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '14s/^(.{1}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	cat images/night_watch
+	echo Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"
+	read -s ENTER
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '14s/^(.{1}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	read -t 0.1 -n 1000
+}
+
+function brookshire_night_watch_block_north_1 {
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{28}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{29}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{30}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	cat images/night_watch
+	echo Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"
+	read -s ENTER
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{30}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{39}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{28}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	read -t 0.1 -n 1000
+}
+
+function brookshire_night_watch_block_north_2 {
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{28}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{29}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	cat images/night_watch
+	echo Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"
+	read -s ENTER
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{29}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{28}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	read -t 0.1 -n 1000
+}
+
+function brookshire_night_watch_block_north_3 {
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{28}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	clear
+	cat images/night_watch
+	echo Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"
+	read -s ENTER
+	clear
+	sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+	-e '2s/^(.{28}).(.*)/\1\£\2/' places/brookshire
+	sleep .2
+	read -t 0.1 -n 1000
+}
+
+function night_watch {
+    clear
+    cat images/night_watch
+    echo Night Watchman: \"Quit bugging me and go home, kid.\"
+    read -s ENTER
+}
+
+function night_watch_sleeping {
+    clear
+    cat images/night_watch_sleeping
+    echo You find a guard sleeping at his post.
+    read -s ENTER
+}
+
+function brookshire_sign_north {
+    clear
+    cat images/brookshire_sign_north
+    read -s ENTER
+}
+
+function brookshire_sign_west {
+    clear
+    cat images/brookshire_sign_west
+    read -s ENTER
+}
+
+function brookshire_sign_east {
+    clear
+    cat images/brookshire_sign_east
+    read -s ENTER
+}
+
+function brookshire_sign_market {
+    clear
+    cat images/brookshire_sign_market
+    read -s ENTER
+}
+
+function brookshire_sign_temple {
+    clear
+    cat images/brookshire_sign_temple
+    read -s ENTER
+}
+
+function house_night_1 {
+	clear
+	cat images/brookshire_house_night_1
+	echo The door is locked and the lights are out. Come back in the morning.
+	read -s ENTER
+}
+
+function house_night_2 {
+	clear
+	cat images/brookshire_house_night_2
+	echo The door is locked and the lights are out. Come back in the morning.
+	read -s ENTER
+}
+
+function temple_night {
+	clear
+	cat images/temple_night
+	echo The temple is closed at night. Solace must be found elsewhere.
+	read -s ENTER
+}
+
+function guard_tower {
+	clear
+	cat images/guard_tower
+	echo The door is locked --
+	echo and on second thought is going into the guard tower really a good idea?
+	read -s ENTER
+}
+
+
+
+
+function brookshire_night_1_move {
+    clear
+    sed -i s/.*save.*/"save brookshire_night_1_move $XCORD $YCORD"/g $SAVES/$NAME
+    sed -i s/.*place.*/"place=Brookshire Night 1"/g $SAVES/$NAME
+    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+    -e "2 s/^(.{27}).(.*)/\1\£\2/" \
+    -e "15 s/^(.{1}).(.*)/\1\£\2/" \
+    -e "20 s/^(.{57}).(.*)/\1\£\2/" \
+    -e "1 s/$/ #############/g" \
+    -e "2 s/$/ #   Legend  #/g" \
+    -e "3 s/$/ #           #/g" \
+    -e "4 s/$/ # You: @    #/g" \
+    -e "5 s/$/ # Guard: £  #/g" \
+    -e "6 s/$/ #           #/g" \
+    -e "7 s/$/ # Tree: ψ   #/g" \
+    -e "8 s/$/ # Sign: ф   #/g" \
+    -e "9 s/$/ # Door: И   #/g" \
+    -e "10 s/$/ # Fence: Ħ  #/g" \
+    -e "11 s/$/ #           #/g" \
+    -e "12 s/$/ #############/g" places/brookshire
+	echo
+	echo YCord: $YCORD #debug
+	echo XCord: $XCORD #debug
+	read -s -n 1 MOVE
+    if [ $MOVE ]; then
+        case $MOVE in
+		a)
+            function brookshire_night_1_move_a {
+				case $YCORD in
+				2)
+					if [ $XCORD -eq 8 ] || [ $XCORD -eq 26 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 32 ]; then
+						brookshire_sign_north
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				3)
+					if [ $XCORD -eq 6 ] || [ $XCORD -eq 15 ] || [ $XCORD -eq 26 ] || [ $XCORD -eq 43 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				4)
+					if [ $XCORD -eq 3 ] || [ $XCORD -eq 26 ] || [ $XCORD -eq 44 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				5)
+					if [ $XCORD -eq 2 ] || [ $XCORD -eq 25 ] || [ $XCORD -eq 44 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				6)
+					if [ $XCORD -eq 1 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				7)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 52 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				8)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 15 ] || [ $XCORD -eq 21 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				9)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 11 ] || [ $XCORD -eq 15 ] || [ $XCORD -eq 17 ] || [ $XCORD -eq 21 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 43 ] || [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				10)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 36 ] || [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				11)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 11 ] || [ $XCORD -eq 15 ] || [ $XCORD -eq 17 ] || [ $XCORD -eq 21 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 43 ] || [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 28 ]; then
+						brookshire_sign_market
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				12)
+					if [ $XCORD -eq 2 ]; then
+						brookshire_sign_west
+						brookshire_night_1_move
+					elif [ $XCORD -eq 15 ] || [ $XCORD -eq 21 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 43 ] || [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				13)
+					if [ $XCORD -eq 2 ]; then
+						brookshire_night_watch_block_west_1
+						brookshire_night_1_move
+					elif [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				14)
+					if [ $XCORD -eq 2 ]; then
+						brookshire_night_watch_block_west_2
+						brookshire_night_1_move
+					elif [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				15)
+					if [ $XCORD -eq 2 ]; then
+						night_watch
+						brookshire_night_1_move
+					elif [ $XCORD -eq 14 ] || [ $XCORD -eq 27 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				16)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 38 ] || [ $XCORD -eq 53 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				17)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 39 ] || [ $XCORD -eq 53 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				18)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 39 ] || [ $XCORD -eq 53 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				19)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 42 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				20)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 42 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				21)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 42 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				22)
+					if [ $XCORD -eq 3 ] || [ $XCORD -eq 27 ] || [ $XCORD -eq 42 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				23)
+					if [ $XCORD -eq 4 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				24)
+					if [ $XCORD -eq 6 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				25)
+					if [ $XCORD -eq 9 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				esac
+			}
+			brookshire_night_1_move_a;;
+        w)
+            function brookshire_night_1_move_w {
+				case $YCORD in
+				2)
+					brookshire_night_1_move;;
+				3)
+					if [ $XCORD -eq 6 ] || [ $XCORD -eq 7 ] || [ $XCORD -ge 49 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 27 ]; then
+						night_watch
+						brookshire_night_1_move
+					elif [ $XCORD -eq 28 ]; then
+						brookshire_night_watch_block_north_3
+						brookshire_night_1_move
+					elif [ $XCORD -eq 29 ]; then
+						brookshire_night_watch_block_north_2
+						brookshire_night_1_move
+					elif [ $XCORD -eq 30 ]; then
+						brookshire_night_watch_block_north_1
+						brookshire_night_1_move
+					elif [ $XCORD -eq 31 ]; then
+						brookshire_sign_north
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				4)
+					if [ $XCORD -ge 3 ] && [ $XCORD -lt 5 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 53 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				5)
+					if [ $XCORD -eq 2 ] || [ $XCORD -ge 55 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				6)
+					if [ $XCORD -eq 1 ] || [ $XCORD -eq 11 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 12 ]; then
+						house_night_1
+						brookshire_night_1_move
+					elif [ $XCORD -ge 13 ] && [ $XCORD -lt 26 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 34 ] && [ $XCORD -lt 41 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 41 ]; then
+						house_night_2
+						brookshire_night_1_move
+					elif [ $XCORD -ge 42 ] && [ $XCORD -lt 44 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				7)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				8)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				9)
+					if [ $XCORD -ge 11 ] && [ $XCORD -le 13 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 17 ] && [ $XCORD -le 19 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 23 ] && [ $XCORD -le 25 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				10)
+					if [ $XCORD -eq 9 ]; then
+						brookshire_sign_market
+						brookshire_night_1_move
+					elif [ $XCORD -eq 10 ] || [ $XCORD -eq 14 ] || [ $XCORD -eq 16 ] || [ $XCORD -eq 20 ] || [ $XCORD -eq 22 ] || [ $XCORD -eq 26 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				11)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				12)
+					if [ $XCORD -eq 27 ]; then
+						brookshire_sign_market
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				13)
+					if [ $XCORD -ge 10 ] && [ $XCORD -le 14 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 16 ] && [ $XCORD -le 20 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 22 ] && [ $XCORD -le 26 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 32 ] && [ $XCORD -le 42 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				14)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				15)
+					if [ $XCORD -ge 48 ] && [ $XCORD -le 56 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				16)
+					if [ $XCORD -eq 1 ]; then
+						night_watch
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				17)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				18)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				19)
+					if [ $XCORD -ge 48 ] && [ $XCORD -le 49 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 50 ]; then
+						guard_tower
+						brookshire_night_1_move
+					elif [ $XCORD -ge 51 ] && [ $XCORD -le 52 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 57 ]; then
+						brookshire_sign_east
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				20)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				21)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				22)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				23)
+					if [ $XCORD -ge 10 ] && [ $XCORD -le 19 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 20 ] && [ $XCORD -le 21 ]; then
+						clear
+						cat images/barn_night
+						echo It\'s probably not a good idea to go back into the stable just now.
+						read -s ENTER
+						brookshire_night_1_move
+					elif [ $XCORD -ge 22 ] && [ $XCORD -le 26 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 32 ]; then
+						brookshire_sign_temple
+						brookshire_night_1_move
+					elif [ $XCORD -ge 33 ] && [ $XCORD -le 36 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 37 ]; then
+						temple_night
+						brookshire_night_1_move
+					elif [ $XCORD -ge 38 ] && [ $XCORD -le 41 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD - 1))
+						brookshire_night_1_move
+					fi;;
+				24)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move;;
+				25)
+					YCORD=$(($YCORD - 1))
+				    brookshire_night_1_move
+				esac
+            }
+			brookshire_night_1_move_w;;
+        s)
+			function brookshire_night_1_move_s {
+				case $YCORD in
+				2)
+					if [ $XCORD -eq 27 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 36 ] && [ $XCORD -le 41 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				3)
+					if [ $XCORD -ge 12 ] && [ $XCORD -le 17 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				4)
+					YCORD=$(($YCORD + 1))
+					brookshire_night_1_move;;
+				5)
+					YCORD=$(($YCORD + 1))
+					brookshire_night_1_move;;
+				6)
+					if [ $XCORD -eq 51 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				7)
+					if [ $XCORD -ge 10 ] && [ $XCORD -le 14 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 16 ] && [ $XCORD -le 20 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 22 ] && [ $XCORD -le 26 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 48 ] && [ $XCORD -le 56 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				8)
+					if [ $XCORD -eq 9 ]; then
+						brookshire_sign_market
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				9)
+					if [ $XCORD -eq 35 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				10)
+					if [ $XCORD -eq 10 ] || [ $XCORD -eq 14 ] || [ $XCORD -eq 16 ] || [ $XCORD -eq 20 ] || [ $XCORD -eq 22 ] || [ $XCORD -eq 26 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 27 ]; then
+						brookshire_sign_market
+						brookshire_night_1_move
+					elif [ $XCORD -ge 32 ] && [ $XCORD -le 42 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				11)
+					if [ $XCORD -eq 1 ]; then
+						brookshire_sign_west
+						brookshire_night_1_move
+					elif [ $XCORD -ge 11 ] && [ $XCORD -le 13 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 17 ] && [ $XCORD -le 19 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 23 ] && [ $XCORD -le 25 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				12)
+					YCORD=$(($YCORD + 1))
+					brookshire_night_1_move;;
+				13)
+					YCORD=$(($YCORD + 1))
+					brookshire_night_1_move;;
+				14)
+					if [ $XCORD -eq 13 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 18 ] && [ $XCORD -le 26 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				15)
+					if [ $XCORD -ge 10 ] && [ $XCORD -le 27 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 37 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -ge 48 ] && [ $XCORD -le 52 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				16)
+					if [ $XCORD -ge 36 ] && [ $XCORD -le 38 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				17)
+					if [ $XCORD -eq 57 ]; then
+						brookshire_sign_east
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				18)
+					if [ $XCORD -ge 33 ] && [ $XCORD -le 41 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				19)
+					if [ $XCORD -eq 57 ]; then
+						night_watch_sleeping
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				20)
+					if [ $XCORD -eq 57 ]; then
+						brookshire_sign_temple
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				21)
+					if [ $XCORD -eq 32 ]; then
+						brookshire_sign_temple
+						brookshire_night_1_move
+					elif [ $XCORD -ge 55 ] && [ $XCORD -le 56 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				22)
+					if [ $XCORD -ge 53 ] && [ $XCORD -le 54 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				23)
+					if [ $XCORD -ge 51 ] && [ $XCORD -le 52 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				24)
+					if [ $XCORD -le 8 ] || [ $XCORD -ge 21 ]; then
+						brookshire_night_1_move
+					else
+						YCORD=$(($YCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				25)
+					brookshire_night_1_move
+				esac
+			}
+			brookshire_night_1_move_s;;
+        d)
+			function brookshire_night_1_move_d {
+				case $YCORD in
+				2)
+					if [ $XCORD -eq 17 ] || [ $XCORD -eq 48 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 26 ]; then
+						night_watch
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				3)
+					if [ $XCORD -eq 13 ] || [ $XCORD -eq 17 ] || [ $XCORD -eq 34 ] || [ $XCORD -eq 53 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				4)
+					if [ $XCORD -eq 10 ] || [ $XCORD -eq 33 ] || [ $XCORD -eq 55 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				5)
+					if [ $XCORD -eq 10 ] || [ $XCORD -eq 33 ] || [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				6)
+					if [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				7)
+					if [ $XCORD -eq 50 ] || [ $XCORD -eq 57 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				8)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 15 ] || [ $XCORD -eq 21 ] || [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				9)
+					if [ $XCORD -eq 8 ]; then
+						brookshire_sign_market
+						brookshire_night_1_move
+					elif [ $XCORD -eq 15 ] || [ $XCORD -eq 21 ] || [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				10)
+					if [ $XCORD -eq 34 ] || [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				11)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 15 ] || [ $XCORD -eq 21 ] || [ $XCORD -eq 31 ] || [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				12)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 15 ] || [ $XCORD -eq 21 ] || [ $XCORD -eq 31 ] || [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				13)
+					if [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				14)
+					if [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				15)
+					if [ $XCORD -eq 12 ] || [ $XCORD -eq 17 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				16)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 36 ] || [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				17)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 35 ] || [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				18)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 35 ] || [ $XCORD -eq 47 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 56 ]; then
+						brookshire_sign_east
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				19)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 32 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 57 ]; then
+						XCORD=1
+						YCORD=10
+						forest_trail_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				20)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 32 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 56 ]; then
+						night_watch_sleeping
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				21)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 32 ] || [ $XCORD -eq 56 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				22)
+					if [ $XCORD -eq 9 ] || [ $XCORD -eq 54 ]; then
+						brookshire_night_1_move
+					elif [ $XCORD -eq 31 ]; then
+						brookshire_sign_temple
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				23)
+					if [ $XCORD -eq 52 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				24)
+					if [ $XCORD -eq 50 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				25)
+					if [ $XCORD -eq 20 ]; then
+						brookshire_night_1_move
+					else
+						XCORD=$(($XCORD + 1))
+						brookshire_night_1_move
+					fi;;
+				esac
+			}
+			brookshire_night_1_move_d;;
+        m)
+            menu_new;;
+        *)
+            brookshire_night_1_move;;
+        esac
+    else
+        brookshire_night_1_move
+    fi
+}
+
+function brookshire_night_1_intro {
+    YCORD=23
+    XCORD=21
+    clear
+    cat images/barn_night
+    echo
+    echo
+    echo You can hear the stable master coming. 
+    echo Better find somewhere to hide\!
+    echo
+    echo "	Press enter to continue."
+    read -s ENTER
+    brookshire_night_1_move
+}
+
+function grumpy_stable_master {
+    clear
+    cat images/grumpy_stable_master
+    echo Grumpy Stable Master: \"Stop moving so fast, boy\!\"
+    read -s -n 1 ENTER
+}
+
+function stable_intro_move {
+    clear
+    sed -i s/.*place.*/"place Stable Intro"/g $SAVES/$NAME
+    sed -i s/.*save.*/"save stable_instro_move $XCORD $YCORD"/g $SAVES/$NAME
+    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+    -e "1 s/$/ #####################/g" \
+    -e "2 s/$/ #       Legend      #/g" \
+    -e "3 s/$/ #                   #/g" \
+    -e "4 s/$/ #      You: @       #/g" \
+    -e "5 s/$/ # Stable Master: \&  #/g" \
+    -e "6 s/$/ #            __     #/g" \
+    -e "7 s/$/ #   Horse: %(__)~   #/g" \
+    -e "8 s/$/ #   Straw: #        #/g" \
+    -e "9 s/$/ #   Door: ,,,,      #/g" \
+    -e "10 s/$/ #                   #/g" \
+    -e "11 s/$/ #      Movement     #/g" \
+    -e "12 s/$/ #   w = ↑ | s = ↓   #/g" \
+    -e "13 s/$/ #   a = ← | d = →   #/g" \
+    -e "14 s/$/ #                   #/g" \
+    -e "15 s/$/ #####################/g" \
+    -e '7s/^(.{22}).(.*)/\1\&\2/' places/stable
+    echo Quick\! Run out of the stable and get away from the stable master\!
+    read -s -n 1 MOVE
+    if [ $MOVE ]; then
+        case $MOVE in
+        a)
+            case $YCORD in
+			7)
+				if [ $XCORD -eq 17 ] || [ $XCORD -eq 34 ]; then
+					stable_intro_move
+				elif [ $XCORD -eq 23 ]; then
+					grumpy_stable_master
+					stable_intro_move
+				else
+					XCORD=$(($XCORD - 1))
+					stable_intro_move
+				fi;;
+			8)
+				if [ $XCORD -eq 17 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD - 1))
+					stable_intro_move
+				fi;;
+			9)
+				if [ $XCORD -eq 17 ] || [ $XCORD -eq 23 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD - 1))
+					stable_intro_move
+				fi;;
+			10)
+				if [ $XCORD -eq 17 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD - 1))
+					stable_intro_move
+				fi;;
+			11)
+				if [ $XCORD -eq 17 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 34 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD - 1))
+					stable_intro_move
+				fi;;
+			12)
+				if [ $XCORD -eq 17 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD - 1))
+					stable_intro_move
+				fi;;
+			esac;;
+		w)
+                        case $YCORD in
+			7)
+				stable_intro_move;;
+			8)
+				if [ $XCORD -eq 22 ]; then
+					grumpy_stable_master
+					stable_intro_move
+				elif [ $XCORD -gt 28 ] && [ $XCORD -lt 34 ]; then
+					stable_intro_move
+				else
+					YCORD=$(($YCORD - 1))
+					stable_intro_move
+				fi;;
+			9)
+				if [ $XCORD -eq 17 ]; then
+					stable_intro_move
+				elif [ $XCORD -gt 29 ]; then
+					stable_intro_move
+				else
+					YCORD=$(($YCORD - 1))
+					stable_intro_move
+				fi;;
+			10)
+				if [ $XCORD -gt 17 ] && [ $XCORD -lt 23 ] ; then
+					stable_intro_move
+				else
+					YCORD=$(($YCORD - 1))
+					stable_intro_move
+				fi;;
+			11)
+				if [ $XCORD -eq 17 ] || [ $XCORD -eq 34 ]; then
+					stable_intro_move
+				else
+					YCORD=$(($YCORD - 1))
+					stable_intro_move
+				fi;;
+			12)
+				if [ $XCORD -gt 17 ] && [ $XCORD -lt 23 ]; then
+					stable_intro_move
+				elif [ $XCORD -gt 28 ] && [ $XCORD -lt 34 ]; then
+					stable_intro_move
+				else
+					YCORD=$(($YCORD - 1))
+					stable_intro_move
+				fi;;
+			esac;;
+        s)
+            case $YCORD in
+			7)
+				YCORD=$(($YCORD + 1))
+				stable_intro_move;;
+			8)
+				if [ $XCORD -ge 17 ] && [ $XCORD -lt 23 ]; then
+					stable_intro_move
+				elif [ $XCORD -gt 30 ] && [ $XCORD -le 34 ]; then
+					stable_intro_move
+				else
+					YCORD=$(($YCORD + 1))
+					stable_intro_move
+				fi;;
+			9)
+				YCORD=$(($YCORD + 1))
+				stable_intro_move;;
+			10)
+				if [ $XCORD -ge 17 ] && [ $XCORD -lt 23 ]; then
+					stable_intro_move
+				elif [ $XCORD -ge 29 ] && [ $XCORD -le 34 ]; then
+					stable_intro_move
+				else
+					YCORD=$(($YCORD + 1))
+					stable_intro_move
+				fi;;
+			11)
+				YCORD=$(($YCORD + 1))
+				stable_intro_move;;
+			12)
+				if [ $XCORD -ge 24 ] && [ $XCORD -le 27 ]; then
+					YCORD=23
+					XCORD=21
+					brookshire_night_1_intro					XCORD=$(($XCORD - 1))
+					stable_intro_move
+				else
+					stable_intro_move
+				fi;;
+			esac;;
+        d)
+            case $YCORD in
+			7)
+				if [ $XCORD -eq 21 ]; then
+					grumpy_stable_master
+					stable_intro_move
+				elif [ $XCORD -eq 28 ] || [ $XCORD -eq 34 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD + 1))
+					stable_intro_move
+				fi;;
+			8)
+				if [ $XCORD -eq 34 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD + 1))
+					stable_intro_move
+				fi;;
+			9)
+				if [ $XCORD -eq 17 ] || [ $XCORD -eq 34 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD + 1))
+					stable_intro_move
+				fi;;
+			10)
+				if [ $XCORD -eq 34 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD + 1))
+					stable_intro_move
+				fi;;
+			11)
+				if [ $XCORD -eq 17 ] || [ $XCORD -eq 28 ] || [ $XCORD -eq 34 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD + 1))
+					stable_intro_move
+				fi;;
+			12)
+				if [ $XCORD -eq 34 ]; then
+					stable_intro_move
+				else
+					XCORD=$(($XCORD + 1))
+					stable_intro_move
+				fi;;
+			esac;;
+        m)
+            menu_new;;
+        *)
+            stable_intro_move;;
+        esac
+    else
+        stable_intro_move
+    fi
+}
+
+function new_game {
+    clear
+    if [ ! -d $SAVES ]; then
+        mkdir $SAVES
+    fi
+    COUNT="1"
+    LENGTH=$(wc -l story/intro | cut -f 1 -d ' ')
+    while [[ $COUNT -lt $LENGTH ]]; do
+        LINES=$(($LENGTH - $COUNT))
+        while [ $LINES -gt 0 ]; do
+            echo
+            LINES=$(($LINES - 1))
+        done
+        head -n $COUNT story/intro
+        sleep .5
+        clear
+        COUNT=$((COUNT + 1))
+    done
+    head -n $COUNT story/intro
+    read -s ENTER
+    clear
+    sed -re '12s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '11s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '10s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '9s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '8s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '7s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '7s/^(.{26}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '7s/^(.{25}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '7s/^(.{24}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '7s/^(.{23}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '7s/^(.{22}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+    sleep .5
+    clear
+    sed -re '7s/^(.{22}).(.*)/\1\&\2/' -e '7s/^(.{20}).(.*)/\1\@\2/' places/stable
+    echo
+    read -t 0.1 -n 1000
+    clear
+    cat images/grumpy_stable_master
+    echo Grumpy Stable Master: \"Hey, you\! What\'s your name, kid?\"
+    function name {
+        echo -n "Name: "
+        read NAME
+        if [ $NAME ]; then
+            if [[ $(echo $NAME | wc -w ) = "1" ]]; then
+                if [ $(ls $SAVES/$NAME) ]; then
+                    echo Sorry, that name is already in user, try another.
+                    name
+                else
+                    touch $SAVES/$NAME
+                    clear
+                    echo
+                    echo
+                    echo
+                    echo
+                    echo
+                    echo
+                    echo
+                    echo
+                    echo
+                    echo -e "       From now on all your actions will be saved automatically"
+                    echo -e "                   Press ENTER if you understand."
+                    read -s ENTER
+                    echo "place" > $SAVES/$NAME
+                    echo "save" > $SAVES/$NAME
+                    echo "money 0" >> $SAVES/$NAME
+                    echo "hp 10" >> $SAVES/$NAME
+                    echo "mp 0" >> $SAVES/$NAME
+                    echo "melee_weapon" >> $SAVES/$NAME
+                    echo "range_weapon" >> $SAVES/$NAME
+                    echo "ammo" >> $SAVES/$NAME
+                    echo "hat" >> $SAVES/$NAME
+                    echo "necklace" >> $SAVES/$NAME
+                    echo "tunic rag_tunic" >> $SAVES/$NAME
+                    echo "gloves" >> $SAVES/$NAME
+                    echo "ring0" >> $SAVES/$NAME
+                    echo "ring1" >> $SAVES/$NAME
+                    echo "pants rag_pants" >> $SAVES/$NAME
+                    echo "belt" >> $SAVES/$NAME
+                    echo "boots" >> $SAVES/$NAME
+                    echo "bag0" >> $SAVES/$NAME
+                    echo "bag1" >> $SAVES/$NAME
+                    echo "bag2" >> $SAVES/$NAME
+                    echo "bag3" >> $SAVES/$NAME
+                    echo "bag4" >> $SAVES/$NAME
+                    echo "bag5" >> $SAVES/$NAME
+                    echo "bag6" >> $SAVES/$NAME
+                    echo "bag7" >> $SAVES/$NAME
+                    echo "bag8" >> $SAVES/$NAME
+                    echo "bag9" >> $SAVES/$NAME
+                fi
+            else
+                echo You can only have a one word name.
+            fi
+        else
+            echo Sorry, you must have a name to continue\!
+            name
+        fi
+    }
+    name
+    clear
+    cat images/grumpy_stable_master
+    echo Grumpy Stable Master: \"Yeah, well, you picked the wrong
+    echo stable to sleep in, $NAME\!\"
+    echo
+    read -s ENTER
+    function wasd {
+        clear
+        sed -i s/.*save.*/"save stable_intro_move 20 7"/g $SAVES/$NAME
+        sed -i s/.*place.*/"place=Stable Intro"/g $SAVES/$NAME
+        sed -re '7s/^(.{20}).(.*)/\1\@\2/' -e '7s/^(.{22}).(.*)/\1\&\2/' places/stable
+        echo "press a to move left, w to move up, "
+        echo "s to move down, d to move right, and"
+        echo "m to go back to the main menu."
+        read -s -n 1 MOVE
+        if [ $MOVE ]; then
+            case $MOVE in
+            a)
+                XCORD=19
+                YCORD=7
+                stable_intro_move;;
+            w)
+                XCORD=20
+                YCORD=7
+                stable_intro_move;;
+            s)
+                XCORD=20
+                YCORD=8
+                stable_intro_move;;
+            d)
+                XCORD=21
+                YCORD=7
+                stable_intro_move;;
+            m)
+                menu_new;;
+            *)
+                wasd;;
+            esac
+        else
+            wasd
+        fi
+    }
+    wasd
+    not_done
+}
+
+function load_game {
+    if [ $(ls -1 $SAVES/ | wc -l) -gt 0 ]; then
+		clear
+		echo
+		echo
+		echo
+		echo "			Saved Games:"
+		echo
+		if [ $(ls -1 $SAVES/ | wc -l) -eq 1 ]; then
+			echo
+			echo
+			echo -n "		"
+			echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/saves/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d '=') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
+			echo
+			echo
+			echo -n "	d or enter to select, a or b to go back. "
+			read -s -n 1 LOAD
+			if [ $LOAD ]; then
+				if [ $LOAD = "d" ]; then
+					XCORD=$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
+					YCORD=$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
+					NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
+					$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
+				elif [ $LOAD = "a" ] || [ $LOAD = "b" ]; then
+					menu_load
+				else
+					load_game
+				fi
+			else
+				XCORD=$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
+				YCORD=$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
+				NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
+				$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
+			fi
+		elif [ $LINE -gt 1 ] && [ $LINE -lt $(ls -1 $SAVES/ | wc -l) ] ; then
+			echo -n "		"
+			echo $(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) - $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+			echo
+			echo -n "		"
+			echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
+			echo
+			echo -n "		"
+			echo $(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) - $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+		elif  [ $LINE -eq $(ls -1 $SAVES/ | wc -l) ]; then
+			echo -n "		"
+			echo $(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) - $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+			echo
+			echo -n "		"
+			echo $(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) - $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+			echo
+			echo -n "		"
+			echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
+		else
+			echo -n "		"
+			echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
+			echo
+			echo -n "		"
+			echo $(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) - $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+			echo
+			echo -n "		"
+			echo $(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) - $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+		fi
+		echo
+		echo
+		echo "	Press w to go up, s to go down, "
+		echo -n "	d or enter to select, a or b to go back. "
+		read -s -n 1 LOAD
+		if [ $LOAD ]; then
+			case $LOAD in
+			w)
+				if [ $LINE -eq 1 ]; then
+					load_game
+				else
+					LINE=$(($LINE - 1))
+					load_game
+				fi;;
+			s)
+				if [ $LINE -lt $(ls -1 $SAVES/ | wc -l) ]; then
+					LINE=$(($LINE + 1))
+					load_game
+				else
+					load_game
+				fi;;
+			d)
+				XCORD=$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
+				YCORD=$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
+				NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
+				$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ');;
+			a)
+				menu_load;;
+			b)
+				menu_load;;
+			*)
+				load_game;;
+			esac
+		else
+			XCORD=$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
+			YCORD=$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
+			NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
+			$(sed -n '/place/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
+		fi
+else
+	clear
+	cat images/sword
+	echo
+	echo
+	echo "	You have no saved games or your have chosen the wrong save directory."
+	echo -n "			Press enter to return the main menu."
+	read -s ENTER
+	menu_new
+fi
+}
+
+function credits {
+    clear
+    cat credits
+    read -s ENTER
+    menu_credits
+}
+
+function menu_quit {
+    clear
+    cat images/sword
+    echo "                              1. New Game"
+    echo
+    echo "                              2. Load Game"
+    echo
+    echo "                              3. Credits"
+    echo
+    echo -e "                              \e[1;32m4. Quit\e[m"
+    echo
+    echo
+    echo "                  Press w to go up and s to go down"
+    read -s -n 1 MENU
+    if [ $MENU ]; then
+        case $MENU in
+        1)
+            new_game;;
+        2)
+            LINE=1
+            load_game;;
+        3)
+            credits;;
+        4)
+            clear
+            exit;;
+        s)
+            menu_new;;
+        w)
+            menu_credits;;
+        *)
+            menu_quit
+        esac
+    else
+        clear
+        exit
+    fi
+}
+function menu_credits {
+    clear
+    cat images/sword
+    echo "                              1. New Game"
+    echo
+    echo "                              2. Load Game"
+    echo
+    echo -e "                              \e[1;32m3. Credits\e[m"
+    echo
+    echo "                              4. Quit"
+    echo
+    echo
+    echo "                  Press w to go up and s to go down"
+    read -s -n 1 MENU
+    if [ $MENU ]; then
+        case $MENU in
+        1)
+            new_game;;
+        2)
+            LINE=1
+            load_game;;
+        3)
+            credits;;
+        4)
+            clear
+            exit;;
+        s)
+            menu_quit;;
+        w)
+            menu_load;;
+        *)
+            menu_credits;;
+        esac
+    else
+        credits
+    fi
+}
+
+function menu_load {
+    clear
+    cat images/sword
+    echo "                              1. New Game"
+    echo
+    echo -e "                              \e[1;32m2. Load Game\e[m"
+    echo
+    echo "                              3. Credits"
+    echo
+    echo "                              4. Quit"
+    echo
+    echo
+    echo "                  Press w to go up and s to go down"
+    read -s -n 1 MENU
+    if [ $MENU ]; then
+        case $MENU in
+        1)
+            new_game;;
+        2)
+            LINE=1
+            load_game;;
+        3)
+            credits;;
+        4)
+            clear
+            exit;;
+        s)
+            menu_credits;;
+        w)
+            menu_new;;
+        *)
+            menu_load;;
+        esac
+    else
+		LINE=1
+        load_game
+    fi
+}
+
+function menu_new {
+    clear
+    cat images/sword
+    echo -e "                              \e[1;32m1. New Game\e[m"
+    echo
+    echo "                              2. Load Game"
+    echo
+    echo "                              3. Credits"
+    echo
+    echo "                              4. Quit"
+    echo
+    echo
+    echo "                  Press w to go up and s to go down"
+    read -s -n 1 MENU
+    if [ $MENU ]; then
+        case $MENU in
+        1)
+            new_game;;
+        2)
+            LINE=1
+            load_game;;
+        3)
+            credits;;
+        4)
+            clear
+            exit;;
+        s)
+            menu_load;;
+        w)
+            menu_quit;;
+        *)
+            menu_new;;
+        esac
+    else
+        new_game
+    fi
+}
+start
+menu_new
