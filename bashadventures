@@ -457,6 +457,9 @@ function brookshire_night_1_intro {
   echo
   echo "  Press enter to continue."
   read -s ENTER
+  MAP="$(cat places/brookshire_night_1_map)"
+  readarray MAP_TERRIAN < places/brookshire_night_1_terrian
+  readarray CHAR_SHEET < ~/.bashadventures/$NAME
   brookshire_night_1_move
 }
 
@@ -602,10 +605,7 @@ function stable_intro_move {
         stable_intro_move;;
       12)
         if [ $XCORD -ge 24 ] && [ $XCORD -le 27 ]; then
-          YCORD=23
-          XCORD=21
-          brookshire_night_1_intro          XCORD=$(($XCORD - 1))
-          stable_intro_move
+          brookshire_night_1_intro
         else
           stable_intro_move
         fi;;
