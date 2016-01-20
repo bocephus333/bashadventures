@@ -445,33 +445,38 @@ function angry_cow {
   read -s -n 1 ENTER
 }
 
-function stable_intro_move {
+function stable_night_1_move {
   clear
-  sed -i s/.*save.*/"save stable_instro_move $XCORD $YCORD"/g $SAVES/$NAME
+  sed -i s/.*save.*/"save stable_night_1_move $XCORD $YCORD"/g $SAVES/$NAME
+  DISPLAY="$(echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-  -e '7s/^(.{22}).(.*)/\1\&\2/' places/stable
+       -e '7s/^(.{22}).(.*)/\1\&\2/')"
+  echo "${DISPLAY}"
   echo Quick\! Run out of the stable and get away from the stable master\!
+  echo
+  echo YCord: $YCORD #debug
+  echo XCord: $XCORD #debug
   read -s -n 1 MOVE
   if [ $MOVE ]; then
-  case $MOVE in
-  a|D)
-	NEW_XCORD=$(($XCORD - 1))
-	NEW_YCORD=$YCORD;;
-  w|A)
-	NEW_XCORD=$XCORD
-	NEW_YCORD=$(($YCORD - 1));;
-  s|B)
-	NEW_XCORD=$XCORD
-	NEW_YCORD=$(($YCORD + 1));;
-  d|C)
-	NEW_XCORD=$(($XCORD + 1))
-	NEW_YCORD=$YCORD;;
-  q)
-	quit_prompt;;
-  *)
-	NEW_XCORD=$XCORD
-	NEW_YCORD=$YCORD;;
-  esac
+    case $MOVE in
+      a|D)
+      	NEW_XCORD=$(($XCORD - 1))
+      	NEW_YCORD=$YCORD;;
+      w|A)
+      	NEW_XCORD=$XCORD
+      	NEW_YCORD=$(($YCORD - 1));;
+      s|B)
+      	NEW_XCORD=$XCORD
+      	NEW_YCORD=$(($YCORD + 1));;
+      d|C)
+      	NEW_XCORD=$(($XCORD + 1))
+      	NEW_YCORD=$YCORD;;
+      q)
+    	 quit_prompt;;
+      *)
+      	NEW_XCORD=$XCORD
+      	NEW_YCORD=$YCORD;;
+    esac
   else
     NEW_XCORD=$XCORD
     NEW_YCORD=$YCORD
@@ -482,7 +487,7 @@ function stable_intro_move {
     XCORD=${NEW_XCORD:=XCORD}
     YCORD=${NEW_YCORD:=YCORD};;
   '0')
-    if [[ "${NEW_XCORD}" -le "${XCORD}"]]; then
+    if [[ "${NEW_XCORD}" -le "${XCORD}" ]]; then
       XCORD=${NEW_XCORD:=XCORD}
     fi
     YCORD=${NEW_YCORD:=YCORD};;
@@ -493,7 +498,7 @@ function stable_intro_move {
   'v')
     brookshire_night_1_intro;;
   esac
-  stable_intro_move
+  stable_night_1_move
 }
 
 function new_game {
@@ -560,44 +565,12 @@ function new_game {
   echo Grumpy Stable Master: \"Yeah, well, you picked the wrong
   echo stable to sleep in, $NAME\!\"
   read -s ENTER
-  function wasd {
-      clear
-      sed -i s/.*save.*/"save stable_intro_move 20 7"/g $SAVES/$NAME
-      sed -i s/.*place.*/"place=Stable Intro"/g $SAVES/$NAME
-      sed -re '7s/^(.{20}).(.*)/\1\@\2/' -e '7s/^(.{22}).(.*)/\1\&\2/' places/stable
-      echo "press a to move left, w to move up, "
-      echo "s to move down, d to move right, and"
-      echo "m to go back to the main menu."
-      read -s -n 1 MOVE
-      if [ $MOVE ]; then
-          case $MOVE in
-          a)
-              XCORD=19
-              YCORD=7
-              stable_intro_move;;
-          w)
-              XCORD=20
-              YCORD=7
-              stable_intro_move;;
-          s)
-              XCORD=20
-              YCORD=8
-              stable_intro_move;;
-          d)
-              XCORD=21
-              YCORD=7
-              stable_intro_move;;
-          q)
-              main_menu;;
-          *)
-              wasd;;
-          esac
-      else
-          wasd
-      fi
-  }
-  wasd
-  not_done
+  XCORD=20
+  YCORD=7
+  MAP="${STABLE_NIGHT_1_MAP:=$(< places/stable_night_1_map)}"
+  readarray MAP_TERRIAN < places/stable_night_1_terrian
+  readarray CHAR_SHEET < ~/.bashadventures/$NAME
+  stable_night_1_move
 }
 
 function load_game {
@@ -745,6 +718,7 @@ function main_menu {
   clear
   MENU_OPTION=${MENU_OPTION:=1}
   echo "${SWORD_IMAGE:=$(< images/sword)}"
+  echo
   if [[ ${MENU_OPTION} = 1 ]]; then
   echo -e "                              \e[1;32m1. New Game\e[m"
   else
@@ -785,9 +759,9 @@ function main_menu {
     4)
       clear
       exit;;
-    A)
+    A|w)
       MENU_OPTION=$(($MENU_OPTION - 1 % 4));;
-    B)
+    B|s)
       MENU_OPTION=$(($MENU_OPTION + 1 % 4));;
       esac
   else
