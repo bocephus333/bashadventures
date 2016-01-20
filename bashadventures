@@ -1,9 +1,9 @@
 #! /bin/bash
 # Bash Adventures, a text based adventure game.
-if [ $1 ]; then
-  if [ $1 = "--saves" ] || [ $1 = "-s" ]; then
-    if [ $2 ]; then
-      if [ -d $2 ]; then
+if [ "$1" ]; then
+  if [ "$1" = "--saves" ] || [ "$1" = "-s" ]; then
+    if [ "$2" ]; then
+      if [ -d "$2" ]; then
         SAVES="$2"
       else
         echo "That directory does not exist."
@@ -21,64 +21,33 @@ else
 fi
 
 function start {
-  clear
-  printf "\n\n\n\n\n"
-  cat images/sword
-  sleep .2
-  clear
-  printf "\n\n\n\n"
-  cat images/sword
-  sleep .2
-  clear
-  printf "\n\n\n"
-  cat images/sword
-  sleep .2
-  clear
-  printf "\n\n"
-  cat images/sword
-  sleep .2
-  clear
-  printf "\n"
-  cat images/sword
-  sleep .2
-  clear
-  cat images/sword
-  sleep .2
+  for LINE in {5..0}; do
+    clear
+    for RETURN in $(eval echo {0.."$LINE"}); do
+      printf "\n"
+    done
+    echo "${SWORD_IMAGE:=$(< images/sword)}"
+    sleep .2
+  done
   read -t 0.1 -n 1000
 }
 
 function not_done {
   clear
-  cat images/sword
+  echo "${SWORD_IMAGE:=$(< images/sword)}"
   echo -e "                        \033[1;31mThis feature is not"
   echo -e "                        currently implemented"
   echo -e "                        press enter to go"
   echo -e "                        back to the menu.\033[0m"
   read -s ENTER
-  XCORD=$(sed -n '/place/p' $SAVES/$NAME | cut -f 3 -d ' ')
-  YCORD=$(sed -n '/place/p' $SAVES/$NAME | cut -f 4 -d ' ')
-  $(sed -n '/place/p' $SAVES/$NAME | cut -f 2 -d ' ')
-}
-
-function rag_tunic {
-  TUNIC="Dirty rags made of wool."
-  TUNIC_HP="0"
-  TUNIC_MP="0"
-  TUNIC_AC="0"
-  TUNIC_EFFECT="Nothing"
-}
-
-function rag_pants {
-  PANTS="Dirty rags made of wool."
-  PANTS_HP="0"
-  PANTS_MP="0"
-  PANTS_AC="0"
-  PANTS_EFFECT="Nothing"
+  XCORD=$(sed -n '/place/p' "$SAVES/$NAME" | cut -f 3 -d ' ')
+  YCORD=$(sed -n '/place/p' "$SAVES/$NAME" | cut -f 4 -d ' ')
+  $(sed -n '/place/p' "$SAVES/$NAME" | cut -f 2 -d ' ')
 }
 
 function spider_no_weapon {
   clear
-  cat images/spider
+  echo "${SPIDER_IMAGE:=$(< images/spider)}"
   echo You see a large and very dangerous looking spider.
   echo Without a weapon you dare not get any closer.
   read -s ENTER
@@ -86,7 +55,7 @@ function spider_no_weapon {
 
 function cave_cliff {
   clear
-  cat images/cave_cliff
+  echo "${CAVE_CLIFF_IMAGE:=$(< images/cave_cliff)}"
   echo
   echo
   echo "This cliff is too high for you to reach the ledge."
@@ -114,56 +83,56 @@ forest_trail_cave_night_1_move() {
   X=$((${XCORD:=25} - 3))
   DISPLAY="$(echo "${MAP}" | \
   sed -re "$((Y - 2)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y - 3))]:${X}:7}\2/" \
-       -e "$((Y - 1)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y - 2))]:${X}:7}\2/" \
-       -e "${Y}       s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y - 1))]:${X}:3}\@${MAP_HIDDEN[$((Y - 1))]:$((X + 4)):3}\2/" \
-       -e "$((Y + 1)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$Y]:${X}:7}\2/" \
-       -e "$((Y + 2)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y + 1))]:${X}:7}\2/")"
+     -e "$((Y - 1)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y - 2))]:${X}:7}\2/" \
+     -e "${Y}       s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y - 1))]:${X}:3}\@${MAP_HIDDEN[$((Y - 1))]:$((X + 4)):3}\2/" \
+     -e "$((Y + 1)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$Y]:${X}:7}\2/" \
+     -e "$((Y + 2)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y + 1))]:${X}:7}\2/")"
   echo "${DISPLAY}"
   echo
-  echo YCord: $YCORD #debug
-  echo XCord: $XCORD #debug
+  echo YCord: "${YCORD}" #debug
+  echo XCord: "${XCORD}" #debug
   read -s -n 1 MOVE
   if [ $MOVE ]; then
     case $MOVE in
-    a|D)
-      NEW_XCORD=$(($XCORD - 1))
-      NEW_YCORD=$YCORD;;
-    w|A)
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$(($YCORD - 1));;
-    s|B)
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$(($YCORD + 1));;
-    d|C)
-      NEW_XCORD=$(($XCORD + 1))
-      NEW_YCORD=$YCORD;;
-    q)
-      quit_prompt;;
-    *)
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$YCORD;;
+      a|D)
+        NEW_XCORD="$((${XCORD} - 1))"
+        NEW_YCORD="${YCORD}";;
+      w|A)
+        NEW_XCORD="${XCORD}"
+        NEW_YCORD="$((${YCORD} - 1))";;
+      s|B)
+        NEW_XCORD="${XCORD}"
+        NEW_YCORD="$((${YCORD} + 1))";;
+      d|C)
+        NEW_XCORD="$((${XCORD} + 1))"
+        NEW_YCORD="${YCORD}";;
+      q)
+        quit_prompt;;
+      *)
+        NEW_XCORD="${XCORD}"
+        NEW_YCORD="${YCORD}";;
     esac
   else
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$YCORD
+    NEW_XCORD="${XCORD}"
+    NEW_YCORD="${YCORD}"
   fi
   NEW_LOC="${MAP_TERRIAN[$((NEW_YCORD - 1))]:$NEW_XCORD:1}"
   case $NEW_LOC in
     ' ')
-      XCORD=$NEW_XCORD
-      YCORD=$NEW_YCORD;;
+      XCORD="${NEW_XCORD}"
+      YCORD="${NEW_YCORD}";;
     '┬')
-    cave_cliff;;
-  'ж')
-    spider_no_weapon;;
+      cave_cliff;;
+    'ж')
+      spider_no_weapon;;
   esac
   forest_trail_cave_night_1_move
 }
 
 function forest_trail_sign {
-    clear
-    cat images/forest_trail_sign
-    read -s ENTER
+  clear
+  echo "${FOREST_TRAIL_SIGN_IMAGE:=$(< images/forest_trail_sign)}"
+  read -s ENTER
 }
 
 function forest_trail_night_1_move {
@@ -171,63 +140,63 @@ function forest_trail_night_1_move {
   sed -i s/.*save.*/"save forest_trail_night_1 $XCORD $YCORD"/g ~/.bashadventures/$NAME
   DISPLAY="$(echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-       -e "10 s/^(.{43}).(.*)/\1\ж\2/" \
-       -e "4 s/^(.{48}).(.*)/\1\ж\2/" \
-       -e "5 s/^(.{13}).(.*)/\1\ж\2/" \
-       -e "12 s/^(.{26}).(.*)/\1\ж\2/")"
+     -e "10 s/^(.{43}).(.*)/\1\ж\2/" \
+     -e "4 s/^(.{48}).(.*)/\1\ж\2/" \
+     -e "5 s/^(.{13}).(.*)/\1\ж\2/" \
+     -e "12 s/^(.{26}).(.*)/\1\ж\2/")"
   echo "${DISPLAY}"
   echo
   echo YCord: $YCORD #debug
   echo XCord: $XCORD #debug
   read -s -n 1 MOVE
    if [ $MOVE ]; then
-    case $MOVE in
-    a|D)
-      NEW_XCORD=$(($XCORD - 1))
-      NEW_YCORD=$YCORD;;
-    w|A)
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$(($YCORD - 1));;
-    s|B)
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$(($YCORD + 1));;
-    d|C)
-      NEW_XCORD=$(($XCORD + 1))
-      NEW_YCORD=$YCORD;;
-    q)
-      quit_prompt;;
-    *)
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$YCORD;;
-    esac
+  case $MOVE in
+  a|D)
+    NEW_XCORD=$(($XCORD - 1))
+    NEW_YCORD=$YCORD;;
+  w|A)
+    NEW_XCORD=$XCORD
+    NEW_YCORD=$(($YCORD - 1));;
+  s|B)
+    NEW_XCORD=$XCORD
+    NEW_YCORD=$(($YCORD + 1));;
+  d|C)
+    NEW_XCORD=$(($XCORD + 1))
+    NEW_YCORD=$YCORD;;
+  q)
+    quit_prompt;;
+  *)
+    NEW_XCORD=$XCORD
+    NEW_YCORD=$YCORD;;
+  esac
   else
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$YCORD
+    NEW_XCORD=$XCORD
+    NEW_YCORD=$YCORD
   fi
   NEW_LOC="${MAP_TERRIAN[$((NEW_YCORD - 1))]:$NEW_XCORD:1}"
   case $NEW_LOC in
-    ' ')
-      XCORD=$NEW_XCORD
-      YCORD=$NEW_YCORD;;
-    'ф')
-      forest_trail_sign;;
-    'ж')
-      spider_no_weapon;;
-    'Ʌ')
-      YCORD=23
-      XCORD=25
-      MAP="$(cat places/forest_trail_cave_night_1_map)"
-      readarray MAP_HIDDEN < places/forest_trail_cave_night_1_hidden
-      readarray MAP_TERRIAN < places/forest_trail_cave_map_night_1_terrian
-      readarray CHAR_SHEET < ~/.bashadventures/$NAME
-      forest_trail_cave_night_1_move;;
-    '<')
-      YCORD=19
-      XCORD=57
-      MAP="$(cat places/brookshire_night_1_map)"
-      readarray MAP_TERRIAN < places/brookshire_night_1_terrian
-      readarray CHAR_SHEET < ~/.bashadventures/$NAME
-      brookshire_night_1_move;;
+  ' ')
+    XCORD=$NEW_XCORD
+    YCORD=$NEW_YCORD;;
+  'ф')
+    forest_trail_sign;;
+  'ж')
+    spider_no_weapon;;
+  'Ʌ')
+    YCORD=23
+    XCORD=25
+    MAP="${FOREST_TRAIL_CAVE_NIGHT_1_MAP:=$(< places/forest_trail_cave_night_1_map)}"
+    readarray MAP_HIDDEN < places/forest_trail_cave_night_1_hidden
+    readarray MAP_TERRIAN < places/forest_trail_cave_map_night_1_terrian
+    readarray CHAR_SHEET < ~/.bashadventures/$NAME
+    forest_trail_cave_night_1_move;;
+  '<')
+    YCORD=19
+    XCORD=57
+    MAP="${BROOKSHIRE_NIGHT_1_MAP:=$(< places/brookshire_night_1_map)}"
+    readarray MAP_TERRIAN < places/brookshire_night_1_terrian
+    readarray CHAR_SHEET < ~/.bashadventures/$NAME
+    brookshire_night_1_move;;
   esac
   forest_trail_night_1_move
 }
@@ -236,28 +205,28 @@ function forest_trail_night_1_move {
 brookshire_night_watch_block_west() {
   PLACES=$((15 - NEW_YCORD))
   for PLACE in $(eval echo "{1..$PLACES}"); do
-    clear
-    NEW_GUARD_PLACE=$((15 - $PLACE))
-    echo "${MAP}" |\
-    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-         -e "2 s/^(.{27}).(.*)/\1\£\2/" \
-         -e "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
-         -e "20 s/^(.{57}).(.*)/\1\£\2/"
-    sleep .5
+  clear
+  NEW_GUARD_PLACE=$((15 - $PLACE))
+  echo "${MAP}" |\
+  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+       -e "2 s/^(.{27}).(.*)/\1\£\2/" \
+       -e "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
+       -e "20 s/^(.{57}).(.*)/\1\£\2/"
+  sleep .5
   done
   clear
-  cat images/night_watch
+  echo "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
   echo Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"
   read -s ENTER
   for PLACE in $(eval echo "{$PLACES..1}"); do
-    clear
-    NEW_GUARD_PLACE=$((15 - $PLACE))
-    echo "${MAP}" |\
-    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-         -e "2 s/^(.{27}).(.*)/\1\£\2/" \
-         -e "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
-         -e "20 s/^(.{57}).(.*)/\1\£\2/"
-    sleep .5
+  clear
+  NEW_GUARD_PLACE=$((15 - $PLACE))
+  echo "${MAP}" |\
+  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+       -e "2 s/^(.{27}).(.*)/\1\£\2/" \
+       -e "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
+       -e "20 s/^(.{57}).(.*)/\1\£\2/"
+  sleep .5
   done
   read -t 0.00001 -n 1000
 }
@@ -265,86 +234,86 @@ brookshire_night_watch_block_west() {
 brookshire_night_watch_block_north() {
   PLACES=$((NEW_XCORD - 27))
   for PLACE in $(eval echo "{1..$PLACES}"); do
-    clear
-    NEW_GUARD_PLACE=$(($PLACE + 27))
-    echo "${MAP}" |\
-    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-         -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
-         -e "15 s/^(.{1}).(.*)/\1\£\2/" \
-         -e "20 s/^(.{57}).(.*)/\1\£\2/"
-    sleep .5
+  clear
+  NEW_GUARD_PLACE=$(($PLACE + 27))
+  echo "${MAP}" |\
+  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+       -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
+       -e "15 s/^(.{1}).(.*)/\1\£\2/" \
+       -e "20 s/^(.{57}).(.*)/\1\£\2/"
+  sleep .5
   done
   clear
-  cat images/night_watch
+  echo "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
   echo Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"
   read -s ENTER
   for PLACE in $(eval echo "{$PLACES..1}"); do
-    clear
-    NEW_GUARD_PLACE=$(($PLACE + 27))
-    echo "${MAP}" |\
-    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-         -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
-         -e "15 s/^(.{1}).(.*)/\1\£\2/" \
-         -e "20 s/^(.{57}).(.*)/\1\£\2/"
-    sleep .5
+  clear
+  NEW_GUARD_PLACE=$(($PLACE + 27))
+  echo "${MAP}" |\
+  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+       -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
+       -e "15 s/^(.{1}).(.*)/\1\£\2/" \
+       -e "20 s/^(.{57}).(.*)/\1\£\2/"
+  sleep .5
   done
   read -t 0.00001 -n 1000
 }
 
 brookshire_sign_north() {
   clear
-  cat images/brookshire_sign_north
+  echo "${BROOKSHIRE_SIGN_NORTH_IMAGE:=$(< images/brookshire_sign_north)}"
   read -s ENTER
 }
 
 brookshire_sign_west() {
   clear
-  cat images/brookshire_sign_west
+  echo "${BROOKSHIRE_SIGN_WEST_IMAGE:=$(< images/brookshire_sign_west)}"
   read -s ENTER
 }
 
 brookshire_sign_east() {
   clear
-  cat images/brookshire_sign_east
+  echo "${BROOKSHIRE_SIGN_EAST_IMAGE:=$(< images/brookshire_sign_east)}"
   read -s ENTER
 }
 
 brookshire_sign_market() {
   clear
-  cat images/brookshire_sign_market
+  echo "${BROOKSHIRE_SIGN_MARKET_IMAGE:=$(< images/brookshire_sign_market)}"
   read -s ENTER
 }
 
 brookshire_sign_temple() {
   clear
-  cat images/brookshire_sign_temple
+  echo "${BROOKSHIRE_SIGN_TEMPLE_IMAGE:=$(< images/brookshire_sign_temple)}"
   read -s ENTER
 }
 
 house_night_1() {
   clear
-  cat images/brookshire_house_night_1
+  echo "${BROOKSHIRE_HOUSE_NIGHT_1_IMAGE:=$(< images/brookshire_house_night_1)}"
   echo The door is locked and the lights are out. Come back in the morning.
   read -s ENTER
 }
 
 house_night_2() {
   clear
-  cat images/brookshire_house_night_2
+  echo "${BROOKSHIRE_HOUSE_NIGHT_2_IMAGE:=$(< images/brookshire_house_night_2)}"
   echo The door is locked and the lights are out. Come back in the morning.
   read -s ENTER
 }
 
 temple_night() {
   clear
-  cat images/temple_night
+  echo "${TEMPLE_NIGHT_IMAGE:=$(< images/temple_night)}"
   echo The temple is closed at night. Solace must be found elsewhere.
   read -s ENTER
 }
 
 brookshire_guard_tower_night_1() {
   clear
-  cat images/guard_tower
+  echo "${BROOKSHIRE_GUARD_TOWER_IMAGE:=$(< images/guard_tower})"
   echo The door is locked --
   echo and on second thought is going into the guard tower really a good idea?
   read -s ENTER
@@ -352,7 +321,7 @@ brookshire_guard_tower_night_1() {
 
 brookshire_barn_door_night_1() {
   clear
-  cat images/barn_night
+  echo "${BROOKSHIRE_BARN_NIGHT_IMAGE:=$(< images/barn_night)}"
   echo "Probably not a good idea to go back in there."
   read -s ENTER
 }
@@ -363,57 +332,57 @@ brookshire_night_1_move() {
   sed -i s/.*save.*/"save brookshire_night_1 $XCORD $YCORD"/g $SAVES/$NAME
   DISPLAY="$(echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-       -e "2 s/^(.{27}).(.*)/\1\£\2/" \
-       -e "15 s/^(.{1}).(.*)/\1\£\2/" \
-       -e "20 s/^(.{57}).(.*)/\1\£\2/")"
+     -e "2 s/^(.{27}).(.*)/\1\£\2/" \
+     -e "15 s/^(.{1}).(.*)/\1\£\2/" \
+     -e "20 s/^(.{57}).(.*)/\1\£\2/")"
   echo "${DISPLAY}"
   echo
   echo YCord: $YCORD #debug
   echo XCord: $XCORD #debug
   read -s -n 1 MOVE
-   if [ $MOVE ]; then
-    case $MOVE in
-    a|D)
-      NEW_XCORD=$(($XCORD - 1))
-      NEW_YCORD=$YCORD;;
-    w|A)
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$(($YCORD - 1));;
-    s|B)
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$(($YCORD + 1));;
-    d|C)
-      NEW_XCORD=$(($XCORD + 1))
-      NEW_YCORD=$YCORD;;
-    q)
-      quit_prompt;;
-    *)
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$YCORD;;
-    esac
+  if [ $MOVE ]; then
+  case $MOVE in
+  a|D)
+    NEW_XCORD=$(($XCORD - 1))
+    NEW_YCORD=$YCORD;;
+  w|A)
+    NEW_XCORD=$XCORD
+    NEW_YCORD=$(($YCORD - 1));;
+  s|B)
+    NEW_XCORD=$XCORD
+    NEW_YCORD=$(($YCORD + 1));;
+  d|C)
+    NEW_XCORD=$(($XCORD + 1))
+    NEW_YCORD=$YCORD;;
+  q)
+    quit_prompt;;
+  *)
+    NEW_XCORD=$XCORD
+    NEW_YCORD=$YCORD;;
+  esac
   else
-      NEW_XCORD=$XCORD
-      NEW_YCORD=$YCORD
+    NEW_XCORD=$XCORD
+    NEW_YCORD=$YCORD
   fi
   NEW_LOC="${MAP_TERRIAN[$((NEW_YCORD - 1))]:$NEW_XCORD:1}"
-    case $NEW_LOC in
-    ' ')
-      XCORD=$NEW_XCORD
-      YCORD=$NEW_YCORD;;
-    'F')
+  case $NEW_LOC in
+  ' ')
+    XCORD=${NEW_XCORD:=XCORD}
+    YCORD=${NEW_YCORD:=YCORD};;
+  'F')
     brookshire_barn_door_night_1;;
   'e')
     YCORD=10
     XCORD=2
-    MAP="$(cat places/forest_trail_night_1_map)"
+    MAP="${FOREST_TRAIL_TRAIL_NIGHT_1_MAP:=$(< places/forest_trail_TRAIL_night_1_map)}"
     readarray MAP_TERRIAN < places/forest_trail_night_1_terrian
     readarray CHAR_SHEET < ~/.bashadventures/$NAME
     forest_trail_night_1_move;;
   'G')
-      clear
-      cat images/night_watch
-      echo Night Watchman: \"Quit bugging me and go home, kid.\"
-      read -s ENTER;;
+    clear
+    echo "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
+    echo Night Watchman: \"Quit bugging me and go home, kid.\"
+    read -s ENTER;;
   'c')
     brookshire_sign_temple;;
   'C')
@@ -422,7 +391,7 @@ brookshire_night_1_move() {
     brookshire_guard_tower_night_1;;
   'E')
     clear
-    cat images/night_watch_sleeping
+  echo "${NIGHT_WATCH_SLEEPING_IMAGE:=$(< images/night_watch_sleeping)}"
     echo You find a guard sleeping at his post.
     read -s ENTER;;
   'w')
@@ -449,7 +418,7 @@ function brookshire_night_1_intro {
   YCORD=23
   XCORD=21
   clear
-  cat images/barn_night
+  echo "${BROOKSHIRE_BARN_NIGHT_IMAGE:=$(< images/barn_night)}"
   echo
   echo
   echo You can hear the stable master coming.
@@ -457,488 +426,312 @@ function brookshire_night_1_intro {
   echo
   echo "  Press enter to continue."
   read -s ENTER
-  MAP="$(cat places/brookshire_night_1_map)"
+  MAP="${BROOKSHIRE_NIGHT_1_MAP:=$(< places/brookshire_night_1_map)}"
   readarray MAP_TERRIAN < places/brookshire_night_1_terrian
   readarray CHAR_SHEET < ~/.bashadventures/$NAME
   brookshire_night_1_move
 }
 
 function grumpy_stable_master {
-    clear
-    cat images/grumpy_stable_master
-    echo Grumpy Stable Master: \"Stop moving so fast, boy\!\"
-    read -s -n 1 ENTER
+  clear
+  echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
+  echo Grumpy Stable Master: \"Stop moving so fast, boy\!\"
+  read -s -n 1 ENTER
+}
+
+function angry_cow {
+  clear
+  echo "${ANGRY_COW_IMAGE:=$(< images/cow)}"
+  read -s -n 1 ENTER
 }
 
 function stable_intro_move {
-    clear
-    sed -i s/.*save.*/"save stable_instro_move $XCORD $YCORD"/g $SAVES/$NAME
-    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-    -e '7s/^(.{22}).(.*)/\1\&\2/' places/stable
-    echo Quick\! Run out of the stable and get away from the stable master\!
-    read -s -n 1 MOVE
-    if [ $MOVE ]; then
-        case $MOVE in
-        a)
-            case $YCORD in
-      7)
-        if [ $XCORD -eq 17 ] || [ $XCORD -eq 34 ]; then
-          stable_intro_move
-        elif [ $XCORD -eq 23 ]; then
-          grumpy_stable_master
-          stable_intro_move
-        else
-          XCORD=$(($XCORD - 1))
-          stable_intro_move
-        fi;;
-      8)
-        if [ $XCORD -eq 17 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD - 1))
-          stable_intro_move
-        fi;;
-      9)
-        if [ $XCORD -eq 17 ] || [ $XCORD -eq 23 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD - 1))
-          stable_intro_move
-        fi;;
-      10)
-        if [ $XCORD -eq 17 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD - 1))
-          stable_intro_move
-        fi;;
-      11)
-        if [ $XCORD -eq 17 ] || [ $XCORD -eq 23 ] || [ $XCORD -eq 34 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD - 1))
-          stable_intro_move
-        fi;;
-      12)
-        if [ $XCORD -eq 17 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD - 1))
-          stable_intro_move
-        fi;;
-      esac;;
-    w)
-                        case $YCORD in
-      7)
-        stable_intro_move;;
-      8)
-        if [ $XCORD -eq 22 ]; then
-          grumpy_stable_master
-          stable_intro_move
-        elif [ $XCORD -gt 28 ] && [ $XCORD -lt 34 ]; then
-          stable_intro_move
-        else
-          YCORD=$(($YCORD - 1))
-          stable_intro_move
-        fi;;
-      9)
-        if [ $XCORD -eq 17 ]; then
-          stable_intro_move
-        elif [ $XCORD -gt 29 ]; then
-          stable_intro_move
-        else
-          YCORD=$(($YCORD - 1))
-          stable_intro_move
-        fi;;
-      10)
-        if [ $XCORD -gt 17 ] && [ $XCORD -lt 23 ] ; then
-          stable_intro_move
-        else
-          YCORD=$(($YCORD - 1))
-          stable_intro_move
-        fi;;
-      11)
-        if [ $XCORD -eq 17 ] || [ $XCORD -eq 34 ]; then
-          stable_intro_move
-        else
-          YCORD=$(($YCORD - 1))
-          stable_intro_move
-        fi;;
-      12)
-        if [ $XCORD -gt 17 ] && [ $XCORD -lt 23 ]; then
-          stable_intro_move
-        elif [ $XCORD -gt 28 ] && [ $XCORD -lt 34 ]; then
-          stable_intro_move
-        else
-          YCORD=$(($YCORD - 1))
-          stable_intro_move
-        fi;;
-      esac;;
-        s)
-            case $YCORD in
-      7)
-        YCORD=$(($YCORD + 1))
-        stable_intro_move;;
-      8)
-        if [ $XCORD -ge 17 ] && [ $XCORD -lt 23 ]; then
-          stable_intro_move
-        elif [ $XCORD -gt 30 ] && [ $XCORD -le 34 ]; then
-          stable_intro_move
-        else
-          YCORD=$(($YCORD + 1))
-          stable_intro_move
-        fi;;
-      9)
-        YCORD=$(($YCORD + 1))
-        stable_intro_move;;
-      10)
-        if [ $XCORD -ge 17 ] && [ $XCORD -lt 23 ]; then
-          stable_intro_move
-        elif [ $XCORD -ge 29 ] && [ $XCORD -le 34 ]; then
-          stable_intro_move
-        else
-          YCORD=$(($YCORD + 1))
-          stable_intro_move
-        fi;;
-      11)
-        YCORD=$(($YCORD + 1))
-        stable_intro_move;;
-      12)
-        if [ $XCORD -ge 24 ] && [ $XCORD -le 27 ]; then
-          brookshire_night_1_intro
-        else
-          stable_intro_move
-        fi;;
-      esac;;
-        d)
-            case $YCORD in
-      7)
-        if [ $XCORD -eq 21 ]; then
-          grumpy_stable_master
-          stable_intro_move
-        elif [ $XCORD -eq 28 ] || [ $XCORD -eq 34 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD + 1))
-          stable_intro_move
-        fi;;
-      8)
-        if [ $XCORD -eq 34 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD + 1))
-          stable_intro_move
-        fi;;
-      9)
-        if [ $XCORD -eq 17 ] || [ $XCORD -eq 34 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD + 1))
-          stable_intro_move
-        fi;;
-      10)
-        if [ $XCORD -eq 34 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD + 1))
-          stable_intro_move
-        fi;;
-      11)
-        if [ $XCORD -eq 17 ] || [ $XCORD -eq 28 ] || [ $XCORD -eq 34 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD + 1))
-          stable_intro_move
-        fi;;
-      12)
-        if [ $XCORD -eq 34 ]; then
-          stable_intro_move
-        else
-          XCORD=$(($XCORD + 1))
-          stable_intro_move
-        fi;;
-      esac;;
-        q)
-            main_menu;;
-        *)
-            stable_intro_move;;
-        esac
-    else
-        stable_intro_move
+  clear
+  sed -i s/.*save.*/"save stable_instro_move $XCORD $YCORD"/g $SAVES/$NAME
+  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+  -e '7s/^(.{22}).(.*)/\1\&\2/' places/stable
+  echo Quick\! Run out of the stable and get away from the stable master\!
+  read -s -n 1 MOVE
+  if [ $MOVE ]; then
+  case $MOVE in
+  a|D)
+	NEW_XCORD=$(($XCORD - 1))
+	NEW_YCORD=$YCORD;;
+  w|A)
+	NEW_XCORD=$XCORD
+	NEW_YCORD=$(($YCORD - 1));;
+  s|B)
+	NEW_XCORD=$XCORD
+	NEW_YCORD=$(($YCORD + 1));;
+  d|C)
+	NEW_XCORD=$(($XCORD + 1))
+	NEW_YCORD=$YCORD;;
+  q)
+	quit_prompt;;
+  *)
+	NEW_XCORD=$XCORD
+	NEW_YCORD=$YCORD;;
+  esac
+  else
+    NEW_XCORD=$XCORD
+    NEW_YCORD=$YCORD
+  fi
+  NEW_LOC="${MAP_TERRIAN[$((NEW_YCORD - 1))]:$NEW_XCORD:1}"
+  case $NEW_LOC in
+  ' ')
+    XCORD=${NEW_XCORD:=XCORD}
+    YCORD=${NEW_YCORD:=YCORD};;
+  '0')
+    if [[ "${NEW_XCORD}" -le "${XCORD}"]]; then
+      XCORD=${NEW_XCORD:=XCORD}
     fi
+    YCORD=${NEW_YCORD:=YCORD};;
+  '&')
+    grumpy_stable_master;;
+  '%')
+    angry_cow;;
+  'v')
+    brookshire_night_1_intro;;
+  esac
+  stable_intro_move
 }
 
 function new_game {
-    clear
-    if [ ! -d $SAVES ]; then
-        mkdir $SAVES
-    fi
-    COUNT="1"
-    LENGTH=$(wc -l story/intro | cut -f 1 -d ' ')
-    while [[ $COUNT -lt $LENGTH ]]; do
-        LINES=$(($LENGTH - $COUNT))
-        while [ $LINES -gt 0 ]; do
-            echo
-            LINES=$(($LINES - 1))
-        done
-        head -n $COUNT story/intro
-        sleep .5
-        clear
-        COUNT=$((COUNT + 1))
-    done
-    head -n $COUNT story/intro
-    read -s ENTER
-    clear
-    sed -re '12s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '11s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '10s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '9s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '8s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '7s/^(.{27}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '7s/^(.{26}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '7s/^(.{25}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '7s/^(.{24}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '7s/^(.{23}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '7s/^(.{22}).(.*)/\1\&\2/' -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
-    sleep .5
-    clear
-    sed -re '7s/^(.{22}).(.*)/\1\&\2/' -e '7s/^(.{20}).(.*)/\1\@\2/' places/stable
-    echo
-    read -t 0.1 -n 1000
-    clear
-    cat images/grumpy_stable_master
-    echo Grumpy Stable Master: \"Hey, you\! What\'s your name, kid?\"
-    function name {
-        echo -n "Name: "
-        read NAME
-        if [ $NAME ]; then
-            if [[ $(echo $NAME | wc -w ) = "1" ]]; then
-                if [ $(ls $SAVES/$NAME) ]; then
-                    echo Sorry, there is already a user by that name, try another.
-                    name
-                else
-                    clear
-                    echo
-                    echo
-                    echo
-                    echo
-                    echo
-                    echo
-                    echo
-                    echo
-                    echo
-                    echo -e "       From now on all your actions will be saved automatically"
-                    echo -e "                   Press ENTER if you understand."
-                    read -s ENTER
-                    cp save.template $SAVES/$NAME
-                fi
-            else
-                echo You can only have a one word name.
-            fi
-        else
-            echo Sorry, you must have a name to continue\!
-            name
-        fi
-    }
-    name
-    clear
-    cat images/grumpy_stable_master
-    echo Grumpy Stable Master: \"Yeah, well, you picked the wrong
-    echo stable to sleep in, $NAME\!\"
-    echo
-    read -s ENTER
-    function wasd {
-        clear
-        sed -i s/.*save.*/"save stable_intro_move 20 7"/g $SAVES/$NAME
-        sed -i s/.*place.*/"place=Stable Intro"/g $SAVES/$NAME
-        sed -re '7s/^(.{20}).(.*)/\1\@\2/' -e '7s/^(.{22}).(.*)/\1\&\2/' places/stable
-        echo "press a to move left, w to move up, "
-        echo "s to move down, d to move right, and"
-        echo "m to go back to the main menu."
-        read -s -n 1 MOVE
-        if [ $MOVE ]; then
-            case $MOVE in
-            a)
-                XCORD=19
-                YCORD=7
-                stable_intro_move;;
-            w)
-                XCORD=20
-                YCORD=7
-                stable_intro_move;;
-            s)
-                XCORD=20
-                YCORD=8
-                stable_intro_move;;
-            d)
-                XCORD=21
-                YCORD=7
-                stable_intro_move;;
-            q)
-                main_menu;;
-            *)
-                wasd;;
-            esac
-        else
-            wasd
-        fi
-    }
-    wasd
-    not_done
+  clear
+  if [ ! -d $SAVES ]; then
+      mkdir $SAVES
+  fi
+  COUNT="1"
+  LENGTH=$(wc -l story/intro | cut -f 1 -d ' ')
+  while [[ $COUNT -lt $LENGTH ]]; do
+      LINES=$(($LENGTH - $COUNT))
+      while [ $LINES -gt 0 ]; do
+          echo
+          LINES=$(($LINES - 1))
+      done
+      head -n $COUNT story/intro
+      sleep .5
+      clear
+      COUNT=$((COUNT + 1))
+  done
+  head -n $COUNT story/intro
+  read -s ENTER
+  for PLACE in {12..7}; do
+  clear
+  sed -re "${PLACE} s/^(.{27}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+  sleep .5
+  done
+  for PLACE in {26..22}; do
+  clear
+  sed -re "7 s/^(.{$PLACE}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+  sleep .5
+  done
+  read -t 0.1 -n 1000
+  clear
+  echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
+  echo Grumpy Stable Master: \"Hey, you\! What\'s your name, kid?\"
+  function name {
+      echo -n "Name: "
+      read NAME
+      if [ $NAME ]; then
+          if [[ $(echo $NAME | wc -w ) = "1" ]]; then
+              if [ $(ls $SAVES/$NAME) ]; then
+                  echo Sorry, there is already a user by that name, try another.
+                  name
+              else
+                  clear
+                  echo -e "\n\n\n\n\n\n\n\n"
+                  echo -e "       From now on all your actions will be saved automatically"
+                  echo -e "                   Press ENTER if you understand."
+                  read -s ENTER
+                  cp save.template $SAVES/$NAME
+              fi
+          else
+              echo You can only have a one word name.
+          fi
+      else
+          echo Sorry, you must have a name to continue\!
+          name
+      fi
+  }
+  name
+  clear
+  echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
+  echo Grumpy Stable Master: \"Yeah, well, you picked the wrong
+  echo stable to sleep in, $NAME\!\"
+  read -s ENTER
+  function wasd {
+      clear
+      sed -i s/.*save.*/"save stable_intro_move 20 7"/g $SAVES/$NAME
+      sed -i s/.*place.*/"place=Stable Intro"/g $SAVES/$NAME
+      sed -re '7s/^(.{20}).(.*)/\1\@\2/' -e '7s/^(.{22}).(.*)/\1\&\2/' places/stable
+      echo "press a to move left, w to move up, "
+      echo "s to move down, d to move right, and"
+      echo "m to go back to the main menu."
+      read -s -n 1 MOVE
+      if [ $MOVE ]; then
+          case $MOVE in
+          a)
+              XCORD=19
+              YCORD=7
+              stable_intro_move;;
+          w)
+              XCORD=20
+              YCORD=7
+              stable_intro_move;;
+          s)
+              XCORD=20
+              YCORD=8
+              stable_intro_move;;
+          d)
+              XCORD=21
+              YCORD=7
+              stable_intro_move;;
+          q)
+              main_menu;;
+          *)
+              wasd;;
+          esac
+      else
+          wasd
+      fi
+  }
+  wasd
+  not_done
 }
 
 function load_game {
-    if [ $(ls -1 $SAVES/ | wc -l) -gt 0 ]; then
-    clear
+  if [ $(ls -1 $SAVES/ | wc -l) -gt 0 ]; then
+  clear
+  echo
+  echo
+  echo
+  echo "      Saved Games:"
+  echo
+  if [ $(ls -1 $SAVES/ | wc -l) -eq 1 ]; then
     echo
     echo
-    echo
-    echo "      Saved Games:"
-    echo
-    if [ $(ls -1 $SAVES/ | wc -l) -eq 1 ]; then
-      echo
-      echo
-      echo -n "    "
-      echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/saves/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d '=') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
-      echo
-      echo
-      echo -n "  d or enter to select, a or b to go back. "
-      read -s -n 1 LOAD
-      if [ $LOAD ]; then
-        if [ $LOAD = "d" ]; then
-      XCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
-      YCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
-      NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
-      SAVE=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
-      MAP=$(cat places/${SAVE}_map)
-      if [[ -f places/${SAVE}_hidden ]]; then 
-        readarray MAP_HIDDEN < places/${SAVE}_hidden
-      fi
-      readarray MAP_TERRIAN < places/${SAVE}_terrian
-      readarray CHAR_SHEET < ~/.bashadventures/$NAME
-      ${SAVE}_move
-        elif [ $LOAD = "a" ] || [ $LOAD = "b" ]; then
-          menu_load
-        else
-          load_game
-        fi
-      else
-        XCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
-        YCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
-        NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
-        SAVE=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
-        MAP=$(cat places/${SAVE}_map)
-        if [[ -f places/${SAVE}_hidden ]]; then 
-      readarray MAP_HIDDEN < places/${SAVE}_hidden
-    fi
-    readarray MAP_TERRIAN < places/${SAVE}_terrian
-    readarray CHAR_SHEET < ~/.bashadventures/$NAME
-        ${SAVE}_move
-      fi
-    elif [ $LINE -gt 1 ] && [ $LINE -lt $(ls -1 $SAVES/ | wc -l) ] ; then
-      echo -n "    "
-      echo $(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
-      echo
-      echo -n "    "
-      echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
-      echo
-      echo -n "    "
-      echo $(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
-    elif  [ $LINE -eq $(ls -1 $SAVES/ | wc -l) ]; then
-      echo -n "    "
-      echo $(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
-      echo
-      echo -n "    "
-      echo $(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
-      echo
-      echo -n "    "
-      echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
-    else
-      echo -n "    "
-      echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
-      echo
-      echo -n "    "
-      echo $(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
-      echo
-      echo -n "    "
-      echo $(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
-    fi
+    echo -n "    "
+    echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/saves/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d '=') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
     echo
     echo
-    echo "  Press w to go up, s to go down, "
     echo -n "  d or enter to select, a or b to go back. "
     read -s -n 1 LOAD
     if [ $LOAD ]; then
-      case $LOAD in
-      w)
-        if [ $LINE -eq 1 ]; then
-          load_game
-        else
-          LINE=$(($LINE - 1))
-          load_game
-        fi;;
-      s)
-        if [ $LINE -lt $(ls -1 $SAVES/ | wc -l) ]; then
-          LINE=$(($LINE + 1))
-          load_game
-        else
-          load_game
-        fi;;
-      d)
-        XCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
-        YCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
-        NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
-        SAVE=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
-        MAP=$(cat places/${SAVE}_map)
-        if [[ -f places/${SAVE}_hidden ]]; then 
-      readarray MAP_HIDDEN < places/${SAVE}_hidden
-    fi
-    readarray MAP_TERRIAN < places/${SAVE}_terrian
-    readarray CHAR_SHEET < ~/.bashadventures/$NAME
-        ${SAVE}_move;;
-      a)
-        menu_load;;
-      b)
-        menu_load;;
-      *)
-        load_game;;
-      esac
-    else
+      if [ $LOAD = "d" ]; then
     XCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
     YCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
     NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
     SAVE=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
-    MAP=$(cat places/${SAVE}_map)
+    MAP="$(< places/${SAVE}_map)"
     if [[ -f places/${SAVE}_hidden ]]; then
       readarray MAP_HIDDEN < places/${SAVE}_hidden
     fi
     readarray MAP_TERRIAN < places/${SAVE}_terrian
     readarray CHAR_SHEET < ~/.bashadventures/$NAME
     ${SAVE}_move
+      elif [ $LOAD = "a" ] || [ $LOAD = "b" ]; then
+        menu_load
+      else
+        load_game
+      fi
+    else
+      XCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
+      YCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
+      NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
+      SAVE=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
+      MAP="$(< places/${SAVE}_map)"
+      if [[ -f places/${SAVE}_hidden ]]; then
+    readarray MAP_HIDDEN < places/${SAVE}_hidden
+  fi
+  readarray MAP_TERRIAN < places/${SAVE}_terrian
+  readarray CHAR_SHEET < ~/.bashadventures/$NAME
+      ${SAVE}_move
     fi
+  elif [ $LINE -gt 1 ] && [ $LINE -lt $(ls -1 $SAVES/ | wc -l) ] ; then
+    echo -n "    "
+    echo $(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+    echo
+    echo -n "    "
+    echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
+    echo
+    echo -n "    "
+    echo $(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+  elif  [ $LINE -eq $(ls -1 $SAVES/ | wc -l) ]; then
+    echo -n "    "
+    echo $(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 2))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+    echo
+    echo -n "    "
+    echo $(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE - 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+    echo
+    echo -n "    "
+    echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
+  else
+    echo -n "    "
+    echo -e "\e[1;32m$(ls -1 $SAVES/ | sed -n "$LINE"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')\e[m"
+    echo
+    echo -n "    "
+    echo $(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 1))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+    echo
+    echo -n "    "
+    echo $(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) - $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) | cut -f 2 -d ' ') | cut -f 1 -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) | cut -f 2 -d ' ') | cut -f 2  -d '_') $(echo $(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$(($LINE + 2))"p) | cut -f 2 -d ' ') | cut -f 3 -d '_')
+  fi
+  echo
+  echo
+  echo "  Press w to go up, s to go down, "
+  echo -n "  d or enter to select, a or b to go back. "
+  read -s -n 1 LOAD
+  if [ $LOAD ]; then
+    case $LOAD in
+    w)
+      if [ $LINE -eq 1 ]; then
+        load_game
+      else
+        LINE=$(($LINE - 1))
+        load_game
+      fi;;
+    s)
+      if [ $LINE -lt $(ls -1 $SAVES/ | wc -l) ]; then
+        LINE=$(($LINE + 1))
+        load_game
+      else
+        load_game
+      fi;;
+    d)
+      XCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
+      YCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
+      NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
+      SAVE=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
+      MAP="$(< places/${SAVE}_map)"
+      if [[ -f places/${SAVE}_hidden ]]; then
+        readarray MAP_HIDDEN < places/${SAVE}_hidden
+      fi
+      readarray MAP_TERRIAN < places/${SAVE}_terrian
+      readarray CHAR_SHEET < ~/.bashadventures/$NAME
+      ${SAVE}_move;;
+    a)
+      menu_load;;
+    b)
+      menu_load;;
+    *)
+      load_game;;
+    esac
+  else
+  XCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
+  YCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
+  NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
+  SAVE=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
+  MAP="$(< places/${SAVE}_map)"
+  if [[ -f places/${SAVE}_hidden ]]; then
+    readarray MAP_HIDDEN < places/${SAVE}_hidden
+  fi
+  readarray MAP_TERRIAN < places/${SAVE}_terrian
+  readarray CHAR_SHEET < ~/.bashadventures/$NAME
+  ${SAVE}_move
+  fi
 else
   clear
-  cat images/sword
+  echo "${SWORD_IMAGE:=$(< images/sword)}"
   echo
   echo
   echo "  You have no saved games or your have chosen the wrong save directory."
@@ -949,71 +742,71 @@ fi
 }
 
 function main_menu {
-    clear
-    MENU_OPTION=${MENU_OPTION:=1}
-    cat images/sword
-    if [[ ${MENU_OPTION} = 1 ]]; then
-    echo -e "                              \e[1;32m1. New Game\e[m"
+  clear
+  MENU_OPTION=${MENU_OPTION:=1}
+  echo "${SWORD_IMAGE:=$(< images/sword)}"
+  if [[ ${MENU_OPTION} = 1 ]]; then
+  echo -e "                              \e[1;32m1. New Game\e[m"
   else
-     echo "                              1. New Game"
+  echo "                              1. New Game"
   fi
-    echo
-    if [[ ${MENU_OPTION} = 2 ]]; then
-        echo -e "                              \e[1;32m2. Load Game\e[m"
-    else
-    echo "                              2. Load Game"
+  echo
+  if [[ ${MENU_OPTION} = 2 ]]; then
+  echo -e "                              \e[1;32m2. Load Game\e[m"
+  else
+  echo "                              2. Load Game"
   fi
-    echo
-    if [[ ${MENU_OPTION} = 3 ]]; then
-    echo -e "                              \e[1;32m3. Credits\e[m"
-    else
-    echo "                              3. Credits"
+  echo
+  if [[ ${MENU_OPTION} = 3 ]]; then
+  echo -e "                              \e[1;32m3. Credits\e[m"
+  else
+  echo "                              3. Credits"
   fi
-    echo
-    if [[ ${MENU_OPTION} = 4 ]]; then
-        echo -e "                              \e[1;32m4. Quit\e[m"
-    else
-    echo "                              4. Quit"
+  echo
+  if [[ ${MENU_OPTION} = 4 ]]; then
+  echo -e "                              \e[1;32m4. Quit\e[m"
+  else
+  echo "                              4. Quit"
   fi
-    echo
-    echo
-    read -s -n 1 MENU_KEY
-    if [[ $MENU_KEY ]]; then
-        case $MENU_KEY in
-      1)
-        new_game;;
-      2)
-        LINE=1
-        load_game;;
-      3)
-        clear
-        cat credits
-        read -s ENTER;;
-      4)
-        clear
-        exit;;
-      A)
-        MENU_OPTION=$(($MENU_OPTION - 1 % 4));;
-      B)
-        MENU_OPTION=$(($MENU_OPTION + 1 % 4));;
-        esac
-    else
-    case $MENU_OPTION in
-      1)
-        new_game;;
-      2)
-        LINE=1
-        load_game;;
-      3)
-        clear
-        cat credits
-        read -s ENTER;;
-      4)
-        clear
-        exit;;
-         esac
-    fi
-    main_menu
+  echo
+  echo
+  read -s -n 1 MENU_KEY
+  if [[ $MENU_KEY ]]; then
+  case $MENU_KEY in
+    1)
+      new_game;;
+    2)
+      LINE=1
+      load_game;;
+    3)
+      clear
+      echo "${CREDITS:=$(< credits)}"
+      read -s ENTER;;
+    4)
+      clear
+      exit;;
+    A)
+      MENU_OPTION=$(($MENU_OPTION - 1 % 4));;
+    B)
+      MENU_OPTION=$(($MENU_OPTION + 1 % 4));;
+      esac
+  else
+  case $MENU_OPTION in
+    1)
+      new_game;;
+    2)
+      LINE=1
+      load_game;;
+    3)
+      clear
+      echo "${CREDITS:=$(< credits)}"
+      read -s ENTER;;
+    4)
+      clear
+      exit;;
+   esac
+  fi
+  main_menu
 }
 start
 main_menu
