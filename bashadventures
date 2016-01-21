@@ -591,27 +591,27 @@ function load_game {
     if [[ "${LOAD}" ]]; then
       case "${LOAD}" in
         d|C)
-          XCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')
-          YCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')
+          XCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')"
+          YCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')"
           NAME=${SAVED_GAMES[$LINE]##*/}
-          SAVE=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')
+          SAVE="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')"
           MAP="$(< places/"${SAVE}"_map)"
-          if [[ -f places/${SAVE}_hidden ]]; then
-            readarray MAP_HIDDEN < places/${SAVE}_hidden
+          if [[ -f "places/${SAVE}_hidden" ]]; then
+            readarray MAP_HIDDEN < "places/${SAVE}_hidden"
           fi
-          readarray MAP_TERRIAN < places/${SAVE}_terrian
-          readarray CHAR_SHEET < ${SAVES}/$NAME
-          ${SAVE}_move;;
+          readarray MAP_TERRIAN < "places/${SAVE}_terrian"
+          readarray CHAR_SHEET < "${SAVES}/${NAME}"
+          "${SAVE}"_move;;
         a|D)
           main_menu;;
         *)
           load_game;;
       esac
     else
-      XCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')
-      YCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')
+      XCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')"
+      YCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')"
       NAME=${SAVED_GAMES[$LINE]##*/}
-      SAVE=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')
+      SAVE="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')"
       MAP="$(< places/${SAVE}_map)"
       if [[ -f "places/${SAVE}_hidden" ]]; then
         readarray MAP_HIDDEN < "places/${SAVE}_hidden"
