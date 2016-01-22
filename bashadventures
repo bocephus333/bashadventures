@@ -590,27 +590,27 @@ function load_game {
     if [[ "${LOAD}" ]]; then
       case "${LOAD}" in
         d|C)
-          XCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')
-          YCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')
+          XCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')"
+          YCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')"
           NAME=${SAVED_GAMES[$LINE]##*/}
-          SAVE=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')
+          SAVE="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')"
           MAP="$(< places/"${SAVE}"_map)"
-          if [[ -f places/${SAVE}_hidden ]]; then
-            readarray MAP_HIDDEN < places/${SAVE}_hidden
+          if [[ -f "places/${SAVE}_hidden" ]]; then
+            readarray MAP_HIDDEN < "places/${SAVE}_hidden"
           fi
-          readarray MAP_TERRIAN < places/${SAVE}_terrian
-          readarray CHAR_SHEET < ${SAVES}/$NAME
-          ${SAVE}_move;;
+          readarray MAP_TERRIAN < "places/${SAVE}_terrian"
+          readarray CHAR_SHEET < "${SAVES}/${NAME}"
+          "${SAVE}"_move;;
         a|D)
           main_menu;;
         *)
           load_game;;
       esac
     else
-      XCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')
-      YCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')
+      XCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')"
+      YCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')"
       NAME=${SAVED_GAMES[$LINE]##*/}
-      SAVE=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')
+      SAVE="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')"
       MAP="$(< places/${SAVE}_map)"
       if [[ -f "places/${SAVE}_hidden" ]]; then
         readarray MAP_HIDDEN < "places/${SAVE}_hidden"
@@ -621,19 +621,19 @@ function load_game {
     fi
   elif [ $LINE -gt 1 ] && [ $LINE -lt ${#SAVED_GAMES[*]} ] ; then
     echo -n "    "
-    echo ${SAVED_GAMES[((LINE - 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
+    echo "${SAVED_GAMES[((LINE - 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
     echo
     echo -n "    "
     printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
     echo
     echo -n "    "
-    echo ${SAVED_GAMES[((LINE + 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
-  elif  [ $LINE -eq $(ls -1 $SAVES/ | wc -l) ]; then
+    echo "${SAVED_GAMES[((LINE + 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
+  elif  [ $LINE -eq ${#SAVED_GAMES[*]} ]; then
     echo -n "    "
-    echo ${SAVED_GAMES[((LINE - 2))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
+    echo "${SAVED_GAMES[((LINE - 2))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
     echo
     echo -n "    "
-    echo ${SAVED_GAMES[((LINE - 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
+    echo "${SAVED_GAMES[((LINE - 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
     echo
     echo -n "    "
     printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
@@ -642,10 +642,10 @@ function load_game {
     printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
     echo
     echo -n "    "
-    echo ${SAVED_GAMES[((LINE + 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
+    echo "${SAVED_GAMES[((LINE + 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
     echo
     echo -n "    "
-    echo ${SAVED_GAMES[((LINE + 2))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
+    echo "${SAVED_GAMES[((LINE + 2))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
   fi
   echo
   echo
@@ -669,10 +669,10 @@ function load_game {
         load_game
       fi;;
     d|C)
-      XCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
-      YCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
+      XCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')
+      YCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')
       NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
-      SAVE=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
+      SAVE=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')
       MAP="$(< places/${SAVE}_map)"
       if [[ -f places/${SAVE}_hidden ]]; then
         readarray MAP_HIDDEN < places/${SAVE}_hidden
@@ -686,10 +686,10 @@ function load_game {
       load_game;;
     esac
   else
-  XCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 3 -d ' ')
-  YCORD=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 4 -d ' ')
+  XCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')
+  YCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')
   NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
-  SAVE=$(sed -n '/save/p' $SAVES/$(ls -1 $SAVES/ | sed -n "$LINE"p) | cut -f 2 -d ' ')
+  SAVE=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')
   MAP="$(< places/${SAVE}_map)"
   if [[ -f places/${SAVE}_hidden ]]; then
     readarray MAP_HIDDEN < places/${SAVE}_hidden
