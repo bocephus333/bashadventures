@@ -22,29 +22,28 @@ fi
 
 function start {
   for LINE in {5..0}; do
-    clear
+    printf "\033c"
     for _ in $(eval echo "{0..$LINE}"); do
       printf "\n"
     done
-    echo "${SWORD_IMAGE:=$(< images/sword)}"
+    printf "${SWORD_IMAGE:=$(< images/sword)}"
     sleep .2
   done
-  unset RETURN
   read -t 0.1 -n 1000
 }
 
 function not_done {
-  clear
+  printf "\033c"
   echo "${SWORD_IMAGE:=$(< images/sword)}"
-  echo -e "                        \033[1;31mThis feature is not"
-  echo -e "                        currently implemented"
-  echo -e "                        press enter to go"
-  echo -e "                        back to the menu.\033[0m"
+  printf "                        \033[1;31mThis feature is not"
+  printf "                        currently implemented"
+  printf "                        press enter to go"
+  printf "                        back to the menu.\033[0m"
   read -s _
 }
 
 function spider_no_weapon {
-  clear
+  printf "\033c"
   echo "${SPIDER_IMAGE:=$(< images/spider)}"
   echo You see a large and very dangerous looking spider.
   echo Without a weapon you dare not get any closer.
@@ -52,7 +51,7 @@ function spider_no_weapon {
 }
 
 function cave_cliff {
-  clear
+  printf "\033c"
   echo "${CAVE_CLIFF_IMAGE:=$(< images/cave_cliff)}"
   echo
   echo
@@ -62,7 +61,7 @@ function cave_cliff {
 }
 
 quit_prompt() {
-  clear
+  printf "\033c"
   echo "${DISPLAY}" | \
   sed -re '12 s/^(.{19}).{23}(.*)/\1\┌─────────────────────┐\2/' \
        -e '13 s/^(.{19}).{23}(.*)/\1\│    Are you sure     │\2/' \
@@ -75,7 +74,7 @@ quit_prompt() {
 }
 
 forest_trail_cave_night_1_move() {
-  clear
+  printf "\033c"
   sed -i s/.*save.*/"save forest_trail_cave_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
   Y=${YCORD:=23}
   X=$((${XCORD:=25} - 3))
@@ -128,13 +127,13 @@ forest_trail_cave_night_1_move() {
 }
 
 function forest_trail_sign {
-  clear
+  printf "\033c"
   echo "${FOREST_TRAIL_SIGN_IMAGE:=$(< images/forest_trail_sign)}"
   read -s _
 }
 
 function forest_trail_night_1_move {
-  clear
+  printf "\033c"
   sed -i s/.*save.*/"save forest_trail_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
   DISPLAY="$(echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
@@ -185,7 +184,7 @@ function forest_trail_night_1_move {
     XCORD=25
     MAP="${FOREST_TRAIL_CAVE_NIGHT_1_MAP:=$(< places/forest_trail_cave_night_1_map)}"
     readarray MAP_HIDDEN < places/forest_trail_cave_night_1_hidden
-    readarray MAP_TERRIAN < places/forest_trail_cave_map_night_1_terrian
+    readarray MAP_TERRIAN < places/forest_trail_cave_night_1_terrian
     readarray CHAR_SHEET < "${SAVES}/${NAME}"
     forest_trail_cave_night_1_move;;
   '<')
@@ -203,7 +202,7 @@ function forest_trail_night_1_move {
 brookshire_night_watch_block_west() {
   PLACES=$((15 - NEW_YCORD))
   for PLACE in $(eval echo "{1..$PLACES}"); do
-  clear
+  printf "\033c"
   NEW_GUARD_PLACE=$((15 - PLACE))
   echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
@@ -212,12 +211,12 @@ brookshire_night_watch_block_west() {
        -e "20 s/^(.{57}).(.*)/\1\£\2/"
   sleep .5
   done
-  clear
+  printf "\033c"
   echo "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
   echo Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"
   read -s _
   for PLACE in $(eval echo "{$PLACES..1}"); do
-  clear
+  printf "\033c"
   NEW_GUARD_PLACE=$((15 - PLACE))
   echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
@@ -232,7 +231,7 @@ brookshire_night_watch_block_west() {
 brookshire_night_watch_block_north() {
   PLACES=$((NEW_XCORD - 27))
   for PLACE in $(eval echo "{1..$PLACES}"); do
-  clear
+  printf "\033c"
   NEW_GUARD_PLACE=$((PLACE + 27))
   echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
@@ -241,12 +240,12 @@ brookshire_night_watch_block_north() {
        -e "20 s/^(.{57}).(.*)/\1\£\2/"
   sleep .5
   done
-  clear
+  printf "\033c"
   echo "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
   echo Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"
   read -s _
   for PLACE in $(eval echo "{$PLACES..1}"); do
-  clear
+  printf "\033c"
   NEW_GUARD_PLACE=$((PLACE + 27))
   echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
@@ -259,58 +258,58 @@ brookshire_night_watch_block_north() {
 }
 
 brookshire_sign_north() {
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_SIGN_NORTH_IMAGE:=$(< images/brookshire_sign_north)}"
   read -s _
 }
 
 brookshire_sign_west() {
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_SIGN_WEST_IMAGE:=$(< images/brookshire_sign_west)}"
   read -s _
 }
 
 brookshire_sign_east() {
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_SIGN_EAST_IMAGE:=$(< images/brookshire_sign_east)}"
   read -s _
 }
 
 brookshire_sign_market() {
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_SIGN_MARKET_IMAGE:=$(< images/brookshire_sign_market)}"
   read -s _
 }
 
 brookshire_sign_temple() {
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_SIGN_TEMPLE_IMAGE:=$(< images/brookshire_sign_temple)}"
   read -s _
 }
 
 house_night_1() {
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_HOUSE_NIGHT_1_IMAGE:=$(< images/brookshire_house_night_1)}"
   echo The door is locked and the lights are out. Come back in the morning.
   read -s _
 }
 
 house_night_2() {
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_HOUSE_NIGHT_2_IMAGE:=$(< images/brookshire_house_night_2)}"
   echo The door is locked and the lights are out. Come back in the morning.
   read -s _
 }
 
 temple_night() {
-  clear
+  printf "\033c"
   echo "${TEMPLE_NIGHT_IMAGE:=$(< images/temple_night)}"
   echo The temple is closed at night. Solace must be found elsewhere.
   read -s _
 }
 
 brookshire_guard_tower_night_1() {
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_GUARD_TOWER_IMAGE:=$(< images/guard_tower)}"
   echo The door is locked --
   echo and on second thought is going into the guard tower really a good idea?
@@ -318,14 +317,14 @@ brookshire_guard_tower_night_1() {
 }
 
 brookshire_barn_door_night_1() {
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_BARN_NIGHT_IMAGE:=$(< images/barn_night)}"
   echo "Probably not a good idea to go back in there."
   read -s _
 }
 
 brookshire_night_1_move() {
-  clear
+  printf "\033c"
   sed -i s/.*save.*/"save brookshire_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
   DISPLAY="$(echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
@@ -371,12 +370,12 @@ brookshire_night_1_move() {
     'e')
       YCORD=10
       XCORD=2
-      MAP="${FOREST_TRAIL_TRAIL_NIGHT_1_MAP:=$(< places/forest_trail_TRAIL_night_1_map)}"
+      MAP="${FOREST_TRAIL_TRAIL_NIGHT_1_MAP:=$(< places/forest_trail_night_1_map)}"
       readarray MAP_TERRIAN < places/forest_trail_night_1_terrian
       readarray CHAR_SHEET < "${SAVES}/${NAME}"
       forest_trail_night_1_move;;
     'G')
-      clear
+      printf "\033c"
       echo "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
       echo Night Watchman: \"Quit bugging me and go home, kid.\"
       read -s _;;
@@ -387,8 +386,8 @@ brookshire_night_1_move() {
     'T')
       brookshire_guard_tower_night_1;;
     'E')
-      clear
-    echo "${NIGHT_WATCH_SLEEPING_IMAGE:=$(< images/night_watch_sleeping)}"
+      printf "\033c"
+      echo "${NIGHT_WATCH_SLEEPING_IMAGE:=$(< images/night_watch_sleeping)}"
       echo You find a guard sleeping at his post.
       read -s _;;
     'w')
@@ -414,7 +413,7 @@ brookshire_night_1_move() {
 function brookshire_night_1_intro {
   YCORD=23
   XCORD=21
-  clear
+  printf "\033c"
   echo "${BROOKSHIRE_BARN_NIGHT_IMAGE:=$(< images/barn_night)}"
   echo
   echo
@@ -430,20 +429,20 @@ function brookshire_night_1_intro {
 }
 
 function grumpy_stable_master {
-  clear
+  printf "\033c"
   echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
   echo Grumpy Stable Master: \"Stop moving so fast, boy\!\"
   read -s -n 1 _
 }
 
 function angry_cow {
-  clear
+  printf "\033c"
   echo "${ANGRY_COW_IMAGE:=$(< images/cow)}"
   read -s -n 1 _
 }
 
 function stable_night_1_move {
-  clear
+  printf "\033c"
   sed -i s/.*save.*/"save stable_night_1_move $XCORD $YCORD"/g "${SAVES}/${NAME}"
   DISPLAY="$(echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
@@ -499,7 +498,7 @@ function stable_night_1_move {
 }
 
 function new_game {
-  clear
+  printf "\033c"
   if [ ! -d "${SAVES}" ]; then
       mkdir "${SAVES}"
   fi
@@ -513,23 +512,23 @@ function new_game {
       done
       head -n $COUNT story/intro
       sleep .5
-      clear
+      printf "\033c"
       COUNT=$((COUNT + 1))
   done
   head -n $COUNT story/intro
   read -s _
   for PLACE in {12..7}; do
-  clear
+  printf "\033c"
   sed -re "${PLACE} s/^(.{27}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
   sleep .5
   done
   for PLACE in {26..22}; do
-  clear
+  printf "\033c"
   sed -re "7 s/^(.{$PLACE}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
   sleep .5
   done
   read -t 0.1 -n 1000
-  clear
+  printf "\033c"
   echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
   echo Grumpy Stable Master: \"Hey, you\! What\'s your name, kid?\"
   function name {
@@ -541,10 +540,10 @@ function new_game {
                   echo Sorry, there is already a user by that name, try another.
                   name
               else
-                  clear
-                  echo -e "\n\n\n\n\n\n\n\n"
-                  echo -e "       From now on all your actions will be saved automatically"
-                  echo -e "                   Press _ if you understand."
+                  printf "\033c"
+                  printf "\n\n\n\n\n\n\n\n"
+                  printf "       From now on all your actions will be saved automatically"
+                  printf "                   Press ENTER if you understand."
                   read -s _
                   cp save.template "${SAVES}/${NAME}"
               fi
@@ -557,7 +556,7 @@ function new_game {
       fi
   }
   name
-  clear
+  printf "\033c"
   echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
   echo Grumpy Stable Master: \"Yeah, well, you picked the wrong
   echo stable to sleep in, "${NAME}"\!\"
@@ -573,7 +572,7 @@ function new_game {
 function load_game {
   SAVED_GAMES=( "${SAVES}"/* )
   if [ ${#SAVED_GAMES[*]} -gt 0 ]; then
-  clear
+  printf "\033c"
   echo
   echo
   echo
@@ -583,7 +582,7 @@ function load_game {
     echo
     echo
     echo -n "    "
-    echo -e "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
+    printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
     echo
     echo
     echo -n "  d or enter to select, a or b to go back. "
@@ -625,7 +624,7 @@ function load_game {
     echo ${SAVED_GAMES[((LINE - 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
     echo
     echo -n "    "
-    echo -e "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
+    printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
     echo
     echo -n "    "
     echo ${SAVED_GAMES[((LINE + 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
@@ -637,10 +636,10 @@ function load_game {
     echo ${SAVED_GAMES[((LINE - 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
     echo
     echo -n "    "
-    echo -e "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
+    printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
   else
     echo -n "    "
-    echo -e "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
+    printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
     echo
     echo -n "    "
     echo ${SAVED_GAMES[((LINE + 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')
@@ -700,7 +699,7 @@ function load_game {
   ${SAVE}_move
   fi
 else
-  clear
+  printf "\033c"
   echo "${SWORD_IMAGE:=$(< images/sword)}"
   echo
   echo
@@ -712,30 +711,30 @@ fi
 }
 
 function main_menu {
-  clear
+  printf "\033c"
   MENU_OPTION=${MENU_OPTION:=1}
   echo "${SWORD_IMAGE:=$(< images/sword)}"
   echo
   if [[ ${MENU_OPTION} = 1 ]]; then
-  echo -e "                              \e[1;32m1. New Game\e[m"
+  printf "                              \e[1;32m1. New Game\e[m\n"
   else
   echo "                              1. New Game"
   fi
   echo
   if [[ ${MENU_OPTION} = 2 ]]; then
-  echo -e "                              \e[1;32m2. Load Game\e[m"
+  printf "                              \e[1;32m2. Load Game\e[m\n"
   else
   echo "                              2. Load Game"
   fi
   echo
   if [[ ${MENU_OPTION} = 3 ]]; then
-  echo -e "                              \e[1;32m3. Credits\e[m"
+  printf "                              \e[1;32m3. Credits\e[m\n"
   else
   echo "                              3. Credits"
   fi
   echo
   if [[ ${MENU_OPTION} = 4 ]]; then
-  echo -e "                              \e[1;32m4. Quit\e[m"
+  printf "                              \e[1;32m4. Quit\e[m\n"
   else
   echo "                              4. Quit"
   fi
@@ -750,11 +749,11 @@ function main_menu {
       LINE=1
       load_game;;
     3)
-      clear
+      printf "\033c"
       echo "${CREDITS:=$(< credits)}"
       read -s _;;
     4)
-      clear
+      printf "\033c"
       exit;;
     A|w)
       MENU_OPTION=$(($MENU_OPTION - 1 % 4));;
@@ -769,11 +768,11 @@ function main_menu {
       LINE=0
       load_game;;
     3)
-      clear
+      printf "\033c"
       echo "${CREDITS:=$(< credits)}"
       read -s _;;
     4)
-      clear
+      printf "\033c"
       exit;;
    esac
   fi
