@@ -26,7 +26,7 @@ function start {
     for _ in $(eval echo "{0..$LINE}"); do
       printf "\n"
     done
-    printf "${SWORD_IMAGE:=$(< images/sword)}"
+    printf "%s" "${SWORD_IMAGE:=$(< images/sword)}"
     sleep .2
   done
   read -t 0.1 -n 1000
@@ -542,7 +542,7 @@ function new_game {
               else
                   printf "\033c"
                   printf "\n\n\n\n\n\n\n\n"
-                  printf "       From now on all your actions will be saved automatically"
+                  printf "       From now on all your actions will be saved automatically\n"
                   printf "                   Press ENTER if you understand."
                   read -s _
                   cp save.template "${SAVES}/${NAME}"
@@ -571,86 +571,70 @@ function new_game {
 
 function load_game {
   SAVED_GAMES=( "${SAVES}"/* )
-  if [ ${#SAVED_GAMES[*]} -gt 0 ]; then
-  printf "\033c"
-  echo
-  echo
-  echo
-  echo "      Saved Games:"
-  echo
-  if [ ${#SAVED_GAMES[*]} -eq 1 ]; then
-    echo
-    echo
-    echo -n "    "
-    printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
-    echo
-    echo
-    echo -n "  d or enter to select, a or b to go back. "
-    read -s -n 1 LOAD
-    if [[ "${LOAD}" ]]; then
-      case "${LOAD}" in
-        d|C)
-          XCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')"
-          YCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')"
-          NAME=${SAVED_GAMES[$LINE]##*/}
-          SAVE="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')"
-          MAP="$(< places/"${SAVE}"_map)"
-          if [[ -f "places/${SAVE}_hidden" ]]; then
-            readarray MAP_HIDDEN < "places/${SAVE}_hidden"
-          fi
-          readarray MAP_TERRIAN < "places/${SAVE}_terrian"
-          readarray CHAR_SHEET < "${SAVES}/${NAME}"
-          "${SAVE}"_move;;
-        a|D)
-          main_menu;;
-        *)
-          load_game;;
-      esac
-    else
-      XCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')"
-      YCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')"
-      NAME=${SAVED_GAMES[$LINE]##*/}
-      SAVE="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')"
-      MAP="$(< places/${SAVE}_map)"
-      if [[ -f "places/${SAVE}_hidden" ]]; then
-        readarray MAP_HIDDEN < "places/${SAVE}_hidden"
-      fi
-      readarray MAP_TERRIAN < "places/${SAVE}_terrian"
-      readarray CHAR_SHEET < "${SAVES}/${NAME}"
-      "${SAVE}"_move
-    fi
-  elif [ $LINE -gt 1 ] && [ $LINE -lt ${#SAVED_GAMES[*]} ] ; then
-    echo -n "    "
-    echo "${SAVED_GAMES[((LINE - 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
-    echo
-    echo -n "    "
-    printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
-    echo
-    echo -n "    "
-    echo "${SAVED_GAMES[((LINE + 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
-  elif  [ $LINE -eq ${#SAVED_GAMES[*]} ]; then
-    echo -n "    "
-    echo "${SAVED_GAMES[((LINE - 2))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
-    echo
-    echo -n "    "
-    echo "${SAVED_GAMES[((LINE - 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
-    echo
-    echo -n "    "
-    printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
+  if [[ ! -d "${SAVES}" ]] || [[ ${#SAVED_GAMES[*]} -eq 0 ]]; then
+    printf "\033c"
+    printf "%s\n\n" "${SWORD_IMAGE:=$(< images/sword)}"
+    printf "  You have no saved games or your have chosen the wrong save directory.\n"
+    printf "                  Press enter to return the main menu."
+    read -s _
+    main_menu
   else
-    echo -n "    "
-    printf "\e[1;32m${SAVED_GAMES[$LINE]##*/} - $(sed -n '/saves/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | cut -f 3 -d '_')\e[m"
-    echo
-    echo -n "    "
-    echo "${SAVED_GAMES[((LINE + 1))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
-    echo
-    echo -n "    "
-    echo "${SAVED_GAMES[((LINE + 2))]##*/} -  $(sed -n '/saves/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d '=' | cut -f 1 -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d ' ' | cut -f 2  -d '_') $(sed -n '/save/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d ' ' | cut -f 3 -d '_')"
+    printf "\033c"
+    printf "\n\n\n      Saved Games:\n\n"
+    if [ ${#SAVED_GAMES[*]} -eq 1 ]; then
+      printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[$LINE]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
+      printf "  d or enter to select, a or b to go back. "
+      read -s -n 1 LOAD
+      if [[ "${LOAD}" ]]; then
+        case "${LOAD}" in
+          d|C)
+            XCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')"
+            YCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')"
+            NAME=${SAVED_GAMES[$LINE]##*/}
+            SAVE="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')"
+            MAP="$(< places/"${SAVE}"_map)"
+            if [[ -f "places/${SAVE}_hidden" ]]; then
+              readarray MAP_HIDDEN < "places/${SAVE}_hidden"
+            fi
+            readarray MAP_TERRIAN < "places/${SAVE}_terrian"
+            readarray CHAR_SHEET < "${SAVES}/${NAME}"
+            "${SAVE}"_move;;
+          a|D)
+            main_menu;;
+          *)
+            load_game;;
+        esac
+      else
+        XCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')"
+        YCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')"
+        NAME=${SAVED_GAMES[$LINE]##*/}
+        SAVE="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')"
+        MAP="$(< places/${SAVE}_map)"
+        if [[ -f "places/${SAVE}_hidden" ]]; then
+          readarray MAP_HIDDEN < "places/${SAVE}_hidden"
+        fi
+        readarray MAP_TERRIAN < "places/${SAVE}_terrian"
+        readarray CHAR_SHEET < "${SAVES}/${NAME}"
+        "${SAVE}"_move
+      fi
+  elif [ $LINE -gt 1 ] && [ $LINE -lt ${#SAVED_GAMES[*]} ] ; then
+    printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE - 1))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
+    printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[$LINE]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
+    printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE + 1))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
+  elif  [ $LINE -gt ${#SAVED_GAMES[*]} ]; then
+    printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE - 2))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
+    printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE - 1))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
+    printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[$LINE]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
+  else
+    printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[$LINE]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
+    printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE + 1))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
+    printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE + 2))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
   fi
   echo
   echo
   echo "  Press w to go up, s to go down, "
   echo -n "  d or enter to select, a or b to go back. "
+  printf "%s" "${LINE}" #debug
   read -s -n 1 LOAD
   if [[ "${LOAD}" ]]; then
     case "${LOAD}" in
@@ -668,7 +652,7 @@ function load_game {
       else
         load_game
       fi;;
-    d|C)
+    d|C|'')
       XCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')
       YCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')
       NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
@@ -698,48 +682,33 @@ function load_game {
   readarray CHAR_SHEET < ${SAVES}/$NAME
   ${SAVE}_move
   fi
-else
-  printf "\033c"
-  echo "${SWORD_IMAGE:=$(< images/sword)}"
-  echo
-  echo
-  echo "  You have no saved games or your have chosen the wrong save directory."
-  echo -n "      Press enter to return the main menu."
-  read -s _
-  main_menu
 fi
 }
 
 function main_menu {
   printf "\033c"
-  MENU_OPTION=${MENU_OPTION:=1}
-  echo "${SWORD_IMAGE:=$(< images/sword)}"
-  echo
+  MENU_OPTION=${MENU_OPTION:=0}
+  printf "%s\n\n" "${SWORD_IMAGE:=$(< images/sword)}"
+  if [[ ${MENU_OPTION} = 0 ]]; then
+  printf "                              \e[1;32m1. New Game\e[m\n\n"
+  else
+  printf "                              1. New Game\n\n"
+  fi
   if [[ ${MENU_OPTION} = 1 ]]; then
-  printf "                              \e[1;32m1. New Game\e[m\n"
+  printf "                              \e[1;32m2. Load Game\e[m\n\n"
   else
-  echo "                              1. New Game"
+  printf "                              2. Load Game\n\n"
   fi
-  echo
   if [[ ${MENU_OPTION} = 2 ]]; then
-  printf "                              \e[1;32m2. Load Game\e[m\n"
+  printf "                              \e[1;32m3. Credits\e[m\n\n"
   else
-  echo "                              2. Load Game"
+  printf "                              3. Credits\n\n"
   fi
-  echo
   if [[ ${MENU_OPTION} = 3 ]]; then
-  printf "                              \e[1;32m3. Credits\e[m\n"
+  printf "                              \e[1;32m4. Quit\e[m\n\n"
   else
-  echo "                              3. Credits"
+  printf "                              4. Quit\n\n"
   fi
-  echo
-  if [[ ${MENU_OPTION} = 4 ]]; then
-  printf "                              \e[1;32m4. Quit\e[m\n"
-  else
-  echo "                              4. Quit"
-  fi
-  echo
-  echo
   read -s -n 1 MENU_KEY
   if [[ $MENU_KEY ]]; then
   case $MENU_KEY in
@@ -750,28 +719,28 @@ function main_menu {
       load_game;;
     3)
       printf "\033c"
-      echo "${CREDITS:=$(< credits)}"
+      printf "%s" "${CREDITS:=$(< credits)}"
       read -s _;;
     4)
       printf "\033c"
       exit;;
     A|w)
-      MENU_OPTION=$(($MENU_OPTION - 1 % 4));;
+      MENU_OPTION=$((((MENU_OPTION - 1)) % 4));;
     B|s)
-      MENU_OPTION=$(($MENU_OPTION + 1 % 4));;
+      MENU_OPTION=$((((MENU_OPTION + 1)) % 4));;
       esac
   else
   case $MENU_OPTION in
-    1)
+    0)
       new_game;;
-    2)
+    1)
       LINE=0
       load_game;;
-    3)
+    2)
       printf "\033c"
-      echo "${CREDITS:=$(< credits)}"
+      printf "%s" "${CREDITS:=$(< credits)}"
       read -s _;;
-    4)
+    3)
       printf "\033c"
       exit;;
    esac
