@@ -1,11 +1,11 @@
 language: bash
 sudo: required
-dist: trusty
 
 before_install:
-  - echo "deb http://archive.ubuntu.com/ubuntu/ wily universe" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -q
-  - sudo apt-get install shellcheck -y
+  - sudo apt-get install cabal-install  -y
+  - cabal update
+  - cabel install shellcheck
 script:
-  - shellcheck bashadventures
+  - ~/.cabal/bin/shellcheck bashadventures
 
