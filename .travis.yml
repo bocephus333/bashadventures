@@ -1,5 +1,4 @@
 language: bash
-<<<<<<< HEAD
 sudo: required
 
 before_install:
@@ -9,13 +8,3 @@ before_install:
   - cabel install shellcheck
 script:
   - ~/.cabal/bin/shellcheck bashadventures
-
-=======
-install:
-  - ./build/install.sh
-script:
-  - ./build/build.sh
-notifications:
-  email: false
-sudo: required
->>>>>>> 6e5ea57ec567ae33ba73a89967ce1114632eca3a
