@@ -1,5 +1,7 @@
 #! /bin/bash
 # Bash Adventures, a text based adventure game.
+
+set -o pipefail -o errexit
 if [ "$1" ]; then
   if [ "$1" = "--saves" ] || [ "$1" = "-s" ]; then
     if [ "$2" ]; then
@@ -29,7 +31,7 @@ function start {
     printf "%s" "${SWORD_IMAGE:=$(< images/sword)}"
     sleep .2
   done
-  read -r -t 0.1 -n 1000
+  ! read -r -t 0.1 -n 1000
 }
 
 function not_done {
@@ -222,7 +224,7 @@ brookshire_night_watch_block_west() {
        -e "20 s/^(.{57}).(.*)/\1\£\2/"
   sleep .5
   done
-  read -r -t 0.00001 -n 1000
+  ! read -r -t 0.00001 -n 1000
 }
 
 brookshire_night_watch_block_north() {
@@ -251,7 +253,7 @@ brookshire_night_watch_block_north() {
        -e "20 s/^(.{57}).(.*)/\1\£\2/"
   sleep .5
   done
-  read -r -t 0.00001 -n 1000
+  ! read -r -t 0.00001 -n 1000
 }
 
 brookshire_sign_north() {
@@ -334,7 +336,7 @@ brookshire_night_1_move() {
   echo
   echo YCord: $YCORD #debug
   echo XCord: $XCORD #debug
-  read -r -s -t 1 -n 1 MOVE
+  ! read -r -s -t 1 -n 1 MOVE
   if [ "${MOVE}" ]; then
     case "${MOVE}" in
       a|D)
@@ -524,7 +526,7 @@ function new_game {
   sed -re "7 s/^(.{$PLACE}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable_night_1_map
   sleep .5
   done
-  read -r -t 0.1 -n 1000
+  ! read -r -t 0.1 -n 1000
   printf "\033c"
   echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
   echo Grumpy Stable Master: \"Hey, you\! What\'s your name, kid?\"
