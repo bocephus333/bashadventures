@@ -5,6 +5,6 @@ before_install:
   - sudo apt-get update -q
   - sudo apt-get install cabal-install  -y
   - cabal update
-  - cabel install shellcheck
+  - cabal install shellcheck
 script:
   - ~/.cabal/bin/shellcheck bashadventures
