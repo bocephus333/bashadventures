@@ -326,16 +326,18 @@ brookshire_barn_door_night_1() {
 brookshire_night_1_move() {
   printf "\033c"
   sed -i s/.*save.*/"save brookshire_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
+  #NORTH_GUARD_LOC=27$(($(date +%S | sed 's/^0*//') % 4 + 27))
+  NORTH_GUARD_LOC=27
   DISPLAY="$(echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-     -e "2 s/^(.{27}).(.*)/\1\£\2/" \
+     -e "2 s/^(.{$NORTH_GUARD_LOC}).(.*)/\1\£\2/" \
      -e "15 s/^(.{1}).(.*)/\1\£\2/" \
      -e "20 s/^(.{57}).(.*)/\1\£\2/")"
   echo "${DISPLAY}"
   echo
   echo YCord: $YCORD #debug
   echo XCord: $XCORD #debug
-  read -s -n 1 MOVE
+  read -s -t 1 -n 1 MOVE
   if [ "${MOVE}" ]; then
     case "${MOVE}" in
       a|D)
@@ -443,7 +445,7 @@ function angry_cow {
 
 function stable_night_1_move {
   printf "\033c"
-  sed -i s/.*save.*/"save stable_night_1_move $XCORD $YCORD"/g "${SAVES}/${NAME}"
+  sed -i s/.*save.*/"save stable_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
   DISPLAY="$(echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
        -e '7s/^(.{22}).(.*)/\1\&\2/')"
@@ -519,12 +521,12 @@ function new_game {
   read -s _
   for PLACE in {12..7}; do
   printf "\033c"
-  sed -re "${PLACE} s/^(.{27}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+  sed -re "${PLACE} s/^(.{27}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable_night_1_map
   sleep .5
   done
   for PLACE in {26..22}; do
   printf "\033c"
-  sed -re "7 s/^(.{$PLACE}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable
+  sed -re "7 s/^(.{$PLACE}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable_night_1_map
   sleep .5
   done
   read -t 0.1 -n 1000
@@ -583,7 +585,6 @@ function load_game {
     printf "\n\n\n      Saved Games:\n\n"
     if [ ${#SAVED_GAMES[*]} -eq 1 ]; then
       printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[$LINE]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
-      printf "  d or enter to select, a or b to go back. "
       read -s -n 1 LOAD
       if [[ "${LOAD}" ]]; then
         case "${LOAD}" in
@@ -609,7 +610,7 @@ function load_game {
         YCORD="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')"
         NAME=${SAVED_GAMES[$LINE]##*/}
         SAVE="$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')"
-        MAP="$(< places/${SAVE}_map)"
+        MAP="$(< "places/${SAVE}_map")"
         if [[ -f "places/${SAVE}_hidden" ]]; then
           readarray MAP_HIDDEN < "places/${SAVE}_hidden"
         fi
@@ -617,15 +618,15 @@ function load_game {
         readarray CHAR_SHEET < "${SAVES}/${NAME}"
         "${SAVE}"_move
       fi
-  elif [ $LINE -gt 1 ] && [ $LINE -lt ${#SAVED_GAMES[*]} ] ; then
+  elif [[ $LINE -gt 0 ]] && [[ $LINE -lt $((${#SAVED_GAMES[*]} - 1)) ]] ; then
     printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE - 1))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
     printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[$LINE]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
     printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE + 1))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
-  elif  [ $LINE -gt ${#SAVED_GAMES[*]} ]; then
+  elif  [[ $LINE -eq $((${#SAVED_GAMES[*]} - 1)) ]]; then
     printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE - 2))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE - 2))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
     printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE - 1))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE - 1))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
     printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[$LINE]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
-  else
+  elif [[ ${LINE} -eq 0 ]]; then
     printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[$LINE]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
     printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE + 1))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE + 1))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
     printf "    %s - %s\n\n" ${SAVED_GAMES[((LINE + 2))]##*/} "$(sed -n '/save/p' ${SAVED_GAMES[((LINE + 2))]} | cut -f 2 -d ' ' | sed 's/_/ /g')"
@@ -634,19 +635,18 @@ function load_game {
   echo
   echo "  Press w to go up, s to go down, "
   echo -n "  d or enter to select, a or b to go back. "
-  printf "%s" "${LINE}" #debug
   read -s -n 1 LOAD
   if [[ "${LOAD}" ]]; then
     case "${LOAD}" in
     w|A)
-      if [[ ${LINE} -eq 1 ]]; then
+      if [[ ${LINE} -eq 0 ]]; then
         load_game
       else
         LINE=$((LINE - 1))
         load_game
       fi;;
     s|B)
-      if [[ $LINE -lt ${#SAVED_GAMES[*]} ]]; then
+      if [[ $LINE -lt $((${#SAVED_GAMES[*]} - 1)) ]]; then
         LINE=$((LINE + 1))
         load_game
       else
@@ -655,15 +655,15 @@ function load_game {
     d|C|'')
       XCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')
       YCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')
-      NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
+      NAME=${SAVED_GAMES[$LINE]##*/}
       SAVE=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')
-      MAP="$(< places/${SAVE}_map)"
-      if [[ -f places/${SAVE}_hidden ]]; then
-        readarray MAP_HIDDEN < places/${SAVE}_hidden
+      MAP="$(< "places/${SAVE}_map")"
+      if [[ -f "places/${SAVE}_hidden" ]]; then
+        readarray MAP_HIDDEN < "places/${SAVE}_hidden"
       fi
-      readarray MAP_TERRIAN < places/${SAVE}_terrian
-      readarray CHAR_SHEET < ${SAVES}/$NAME
-      ${SAVE}_move;;
+      readarray MAP_TERRIAN < "places/${SAVE}_terrian"
+      readarray CHAR_SHEET < "${SAVES}/${NAME}"
+      "${SAVE}"_move;;
     a|D)
       main_menu;;
     *)
@@ -672,15 +672,15 @@ function load_game {
   else
   XCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 3 -d ' ')
   YCORD=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 4 -d ' ')
-  NAME=$(ls -1 $SAVES/ | sed -n "$LINE"p)
+  NAME=${SAVED_GAMES[$LINE]##*/}
   SAVE=$(sed -n '/save/p' ${SAVED_GAMES[$LINE]} | cut -f 2 -d ' ')
-  MAP="$(< places/${SAVE}_map)"
-  if [[ -f places/${SAVE}_hidden ]]; then
-    readarray MAP_HIDDEN < places/${SAVE}_hidden
+  MAP="$(< "places/${SAVE}_map")"
+  if [[ -f "places/${SAVE}_hidden" ]]; then
+    readarray MAP_HIDDEN < "places/${SAVE}_hidden"
   fi
-  readarray MAP_TERRIAN < places/${SAVE}_terrian
-  readarray CHAR_SHEET < ${SAVES}/$NAME
-  ${SAVE}_move
+  readarray MAP_TERRIAN < "places/${SAVE}_terrian"
+  readarray CHAR_SHEET < "${SAVES}/${NAME}"
+  "${SAVE}"_move
   fi
 fi
 }
