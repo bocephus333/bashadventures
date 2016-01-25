@@ -664,45 +664,45 @@ function main_menu {
   MENU_OPTION=${MENU_OPTION:=0}
   printf "%s\n\n" "${SWORD_IMAGE:=$(< images/sword)}"
   if [[ ${MENU_OPTION} = 0 ]]; then
-  printf "                              \e[1;32m1. New Game\e[m\n\n"
+    printf "                              \e[1;32m1. New Game\e[m\n\n"
   else
-  printf "                              1. New Game\n\n"
+    printf "                              1. New Game\n\n"
   fi
   if [[ ${MENU_OPTION} = 1 ]]; then
-  printf "                              \e[1;32m2. Load Game\e[m\n\n"
+    printf "                              \e[1;32m2. Load Game\e[m\n\n"
   else
-  printf "                              2. Load Game\n\n"
+    printf "                              2. Load Game\n\n"
   fi
   if [[ ${MENU_OPTION} = 2 ]]; then
-  printf "                              \e[1;32m3. Credits\e[m\n\n"
+    printf "                              \e[1;32m3. Credits\e[m\n\n"
   else
-  printf "                              3. Credits\n\n"
+    printf "                              3. Credits\n\n"
   fi
   if [[ ${MENU_OPTION} = 3 ]]; then
-  printf "                              \e[1;32m4. Quit\e[m\n\n"
+    printf "                              \e[1;32m4. Quit\e[m\n\n"
   else
-  printf "                              4. Quit\n\n"
+    printf "                              4. Quit\n\n"
   fi
   read -r -s -n 1 MENU_KEY
   if [[ $MENU_KEY ]]; then
-  case $MENU_KEY in
-    1)
-      new_game;;
-    2)
-      LINE=1
-      load_game;;
-    3)
-      printf "\033c"
-      printf "%s" "${CREDITS:=$(< credits)}"
-      read -r -s _;;
-    4)
-      printf "\033c"
-      exit;;
-    A|w)
-      MENU_OPTION=$((((MENU_OPTION - 1)) % 4));;
-    B|s)
-      MENU_OPTION=$((((MENU_OPTION + 1)) % 4));;
-      esac
+    case $MENU_KEY in
+      1)
+        new_game;;
+      2)
+        LINE=0
+        load_game;;
+      3)
+        printf "\033c"
+        printf "%s" "${CREDITS:=$(< credits)}"
+        read -r -s _;;
+      4)
+        printf "\033c"
+        exit;;
+      A|w)
+        MENU_OPTION=$((((MENU_OPTION - 1 + 4)) % 4));;
+      B|s)
+        MENU_OPTION=$((((MENU_OPTION + 1 + 4)) % 4));;
+    esac
   else
   case $MENU_OPTION in
     0)
