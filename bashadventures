@@ -5,11 +5,9 @@ set -o pipefail -o errexit
 
 
 function start {
-  for LINE in {5..0}; do
+  for LINES in {5..0}; do
     printf "\033c"
-    for _ in $(eval echo "{0..$LINE}"); do
-      printf "\n"
-    done
+    eval printf "%.0s$'\n'" "{0..$LINES}"
     printf "%s" "${SWORD_IMAGE:=$(< images/sword)}"
     sleep .2
   done
