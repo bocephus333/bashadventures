@@ -106,7 +106,8 @@ forest_trail_cave_night_1_move() {
   echo YCord: "${YCORD}" #debug
   echo XCord: "${XCORD}" #debug
   local NEW_XCORD NEW_YCORD QUIT 
-  read NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
+  # shellcheck disable=SC2046
+  read -r NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
   if [[ "${QUIT}" == 'y' ]]; then
     quit_prompt
   fi
@@ -142,8 +143,9 @@ function forest_trail_night_1_move {
   echo
   echo YCord: "$YCORD" #debug
   echo XCord: "$XCORD" #debug
-  local NEW_XCORD NEW_YCORD QUIT 
-  read NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
+  local NEW_XCORD NEW_YCORD QUIT
+  # shellcheck disable=SC2046
+  read -r NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
   if [[ "${QUIT}" == 'y' ]]; then
     quit_prompt
   fi
@@ -310,8 +312,9 @@ brookshire_night_1_move() {
   echo
   echo YCord: $YCORD #debug
   echo XCord: $XCORD #debug
-  local NEW_XCORD NEW_YCORD QUIT 
-  read NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
+  local NEW_XCORD NEW_YCORD QUIT
+  # shellcheck disable=SC2046
+  read -r NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
   if [[ "${QUIT}" == 'y' ]]; then
     quit_prompt
   fi
@@ -405,8 +408,9 @@ function stable_night_1_move {
   echo
   echo YCord: $YCORD #debug
   echo XCord: $XCORD #debug
-  local NEW_XCORD NEW_YCORD QUIT 
-  read NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
+  local NEW_XCORD NEW_YCORD QUIT
+  # shellcheck disable=SC2046
+  read -r NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
   if [[ "${QUIT}" == 'y' ]]; then
     quit_prompt
   fi
