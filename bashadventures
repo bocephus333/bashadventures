@@ -26,6 +26,52 @@ function not_done {
   read -r -s _
 }
 
+quit_prompt() {
+  printf "\033c"
+  echo "${DISPLAY}" | \
+  sed -re '12 s/^(.{19}).{23}(.*)/\1\┌─────────────────────┐\2/' \
+       -e '13 s/^(.{19}).{23}(.*)/\1\│    Are you sure     │\2/' \
+       -e '14 s/^(.{19}).{23}(.*)/\1\│ want to quit? (y|n) │\2/' \
+       -e '15 s/^(.{19}).{23}(.*)/\1\└─────────────────────┘\2/'
+  read -r -s -n 1 QUIT
+  if [[ "${QUIT}" = 'y' ]]; then
+    main_menu
+  fi
+}
+
+movement() {
+  local XCORD="${1}" YCORD="${2}"
+  local KEY_PRESSED NEW_XCORD NEW_YCORD QUIT
+  ! read -r -s -n 1 KEY_PRESSED
+  if [[ "${KEY_PRESSED}" ]]; then
+    case "${KEY_PRESSED}" in
+      a|D)
+        NEW_XCORD="$((XCORD - 1))"
+        NEW_YCORD="${YCORD}";;
+      w|A)
+        NEW_XCORD="${XCORD}"
+        NEW_YCORD="$((YCORD - 1))";;
+      s|B)
+        NEW_XCORD="${XCORD}"
+        NEW_YCORD="$((YCORD + 1))";;
+      d|C)
+        NEW_XCORD="$((XCORD + 1))"
+        NEW_YCORD="${YCORD}";;
+      q)
+        QUIT='y'
+        NEW_XCORD="${XCORD}"
+        NEW_YCORD="${YCORD}";;
+      *)
+        NEW_XCORD="${XCORD}"
+        NEW_YCORD="${YCORD}";;
+    esac
+  else
+    NEW_XCORD="${XCORD}"
+    NEW_YCORD="${YCORD}"
+  fi
+  printf "%s %s %s" "${NEW_XCORD}" "${NEW_YCORD}" "${QUIT}"
+}
+
 function spider_no_weapon {
   printf "\033c"
   echo "${SPIDER_IMAGE:=$(< images/spider)}"
@@ -44,19 +90,6 @@ function cave_cliff {
   read -r -s _
 }
 
-quit_prompt() {
-  printf "\033c"
-  echo "${DISPLAY}" | \
-  sed -re '12 s/^(.{19}).{23}(.*)/\1\┌─────────────────────┐\2/' \
-       -e '13 s/^(.{19}).{23}(.*)/\1\│    Are you sure     │\2/' \
-       -e '14 s/^(.{19}).{23}(.*)/\1\│ want to quit? (y|n) │\2/' \
-       -e '15 s/^(.{19}).{23}(.*)/\1\└─────────────────────┘\2/'
-  read -r -s -n 1 QUIT
-  if [[ "${QUIT}" = 'y' ]]; then
-    main_menu
-  fi
-}
-
 forest_trail_cave_night_1_move() {
   printf "\033c"
   sed -i s/.*save.*/"save forest_trail_cave_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
@@ -72,30 +105,10 @@ forest_trail_cave_night_1_move() {
   echo
   echo YCord: "${YCORD}" #debug
   echo XCord: "${XCORD}" #debug
-  read -r -s -n 1 MOVE
-  if [[ "${MOVE}" ]]; then
-    case "${MOVE}" in
-      a|D)
-        NEW_XCORD="$((XCORD - 1))"
-        NEW_YCORD="${YCORD}";;
-      w|A)
-        NEW_XCORD="${XCORD}"
-        NEW_YCORD="$((YCORD - 1))";;
-      s|B)
-        NEW_XCORD="${XCORD}"
-        NEW_YCORD="$((YCORD + 1))";;
-      d|C)
-        NEW_XCORD="$((XCORD + 1))"
-        NEW_YCORD="${YCORD}";;
-      q)
-        quit_prompt;;
-      *)
-        NEW_XCORD="${XCORD}"
-        NEW_YCORD="${YCORD}";;
-    esac
-  else
-    NEW_XCORD="${XCORD}"
-    NEW_YCORD="${YCORD}"
+  local NEW_XCORD NEW_YCORD QUIT 
+  read NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
+  if [[ "${QUIT}" == 'y' ]]; then
+    quit_prompt
   fi
   NEW_LOC="${MAP_TERRIAN[$((NEW_YCORD - 1))]:$NEW_XCORD:1}"
   case "${NEW_LOC}" in
@@ -129,30 +142,10 @@ function forest_trail_night_1_move {
   echo
   echo YCord: "$YCORD" #debug
   echo XCord: "$XCORD" #debug
-  read -r -s -n 1 MOVE
-  if [[ "${MOVE}" ]]; then
-    case "${MOVE}" in
-    a|D)
-      NEW_XCORD=$((XCORD - 1))
-      NEW_YCORD="${YCORD}";;
-    w|A)
-      NEW_XCORD="${XCORD}"
-      NEW_YCORD=$((YCORD - 1));;
-    s|B)
-      NEW_XCORD="${XCORD}"
-      NEW_YCORD=$((YCORD + 1));;
-    d|C)
-      NEW_XCORD=$((XCORD + 1))
-      NEW_YCORD="${YCORD}";;
-    q)
-      quit_prompt;;
-    *)
-      NEW_XCORD="${XCORD}"
-      NEW_YCORD="${YCORD}";;
-    esac
-  else
-    NEW_XCORD=$XCORD
-    NEW_YCORD=$YCORD
+  local NEW_XCORD NEW_YCORD QUIT 
+  read NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
+  if [[ "${QUIT}" == 'y' ]]; then
+    quit_prompt
   fi
   NEW_LOC="${MAP_TERRIAN[$((NEW_YCORD - 1))]:$NEW_XCORD:1}"
   case $NEW_LOC in
@@ -306,8 +299,7 @@ brookshire_barn_door_night_1() {
 
 brookshire_night_1_move() {
   printf "\033c"
-  sed -i s/.*save.*/"save brookshire_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
-  #NORTH_GUARD_LOC=27$(($(date +%S | sed 's/^0*//') % 4 + 27))
+  sed -i s/.*save.*/"save brookshire_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"S
   NORTH_GUARD_LOC=27
   DISPLAY="$(echo "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
@@ -318,30 +310,10 @@ brookshire_night_1_move() {
   echo
   echo YCord: $YCORD #debug
   echo XCord: $XCORD #debug
-  ! read -r -s -t 1 -n 1 MOVE
-  if [ "${MOVE}" ]; then
-    case "${MOVE}" in
-      a|D)
-        NEW_XCORD=$((XCORD - 1))
-        NEW_YCORD=$YCORD;;
-      w|A)
-        NEW_XCORD=$XCORD
-        NEW_YCORD=$((YCORD - 1));;
-      s|B)
-        NEW_XCORD=$XCORD
-        NEW_YCORD=$((YCORD + 1));;
-      d|C)
-        NEW_XCORD=$((XCORD + 1))
-        NEW_YCORD=$YCORD;;
-      q)
-        quit_prompt;;
-      *)
-        NEW_XCORD=$XCORD
-        NEW_YCORD=$YCORD;;
-    esac
-  else
-    NEW_XCORD=$XCORD
-    NEW_YCORD=$YCORD
+  local NEW_XCORD NEW_YCORD QUIT 
+  read NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
+  if [[ "${QUIT}" == 'y' ]]; then
+    quit_prompt
   fi
   NEW_LOC="${MAP_TERRIAN[$((NEW_YCORD - 1))]:$NEW_XCORD:1}"
   case $NEW_LOC in
@@ -433,30 +405,10 @@ function stable_night_1_move {
   echo
   echo YCord: $YCORD #debug
   echo XCord: $XCORD #debug
-  read -r -s -n 1 MOVE
-  if [[ "${MOVE}" ]]; then
-    case $MOVE in
-      a|D)
-      	NEW_XCORD=$((XCORD - 1))
-      	NEW_YCORD=$YCORD;;
-      w|A)
-      	NEW_XCORD=$XCORD
-      	NEW_YCORD=$((YCORD - 1));;
-      s|B)
-      	NEW_XCORD=$XCORD
-      	NEW_YCORD=$((YCORD + 1));;
-      d|C)
-      	NEW_XCORD=$((XCORD + 1))
-      	NEW_YCORD=$YCORD;;
-      q)
-    	 quit_prompt;;
-      *)
-      	NEW_XCORD=$XCORD
-      	NEW_YCORD=$YCORD;;
-    esac
-  else
-    NEW_XCORD=$XCORD
-    NEW_YCORD=$YCORD
+  local NEW_XCORD NEW_YCORD QUIT 
+  read NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
+  if [[ "${QUIT}" == 'y' ]]; then
+    quit_prompt
   fi
   NEW_LOC="${MAP_TERRIAN[$((NEW_YCORD - 1))]:$NEW_XCORD:1}"
   case $NEW_LOC in
@@ -686,16 +638,16 @@ function main_menu {
   read -r -s -n 1 MENU_KEY
   if [[ $MENU_KEY ]]; then
     case $MENU_KEY in
-      1)
+      1|n)
         new_game;;
-      2)
+      2|l)
         LINE=0
         load_game;;
-      3)
+      3|c)
         printf "\033c"
         printf "%s" "${CREDITS:=$(< credits)}"
         read -r -s _;;
-      4)
+      4|q)
         printf "\033c"
         exit;;
       A|w)
