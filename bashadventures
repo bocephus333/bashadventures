@@ -2,25 +2,7 @@
 # Bash Adventures, a text based adventure game.
 
 set -o pipefail -o errexit
-if [ "$1" ]; then
-  if [ "$1" = "--saves" ] || [ "$1" = "-s" ]; then
-    if [ "$2" ]; then
-      if [ -d "$2" ]; then
-        SAVES="$2"
-      else
-        echo "That directory does not exist."
-        exit
-      fi
-    else
-      echo "The option --saves must be followed by a directory."
-      exit
-    fi
-  else
-    SAVES="$HOME/.bashadventures"
-  fi
-else
-  SAVES="$HOME/.bashadventures"
-fi
+
 
 function start {
   for LINE in {5..0}; do
@@ -739,5 +721,17 @@ function main_menu {
   fi
   main_menu
 }
-start
-main_menu
+
+main() {
+  while getopts "s:" OPTION; do
+    case "${OPTION}" in
+      s)
+        local SAVES="${OPTARG}";;
+    esac
+  done
+  SAVES="${SAVES:=${HOME}/.bashadventures}"
+  start
+  main_menu
+}
+
+main "${@}"
