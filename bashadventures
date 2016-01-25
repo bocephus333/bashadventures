@@ -105,7 +105,7 @@ forest_trail_cave_night_1_move() {
   echo
   echo YCord: "${YCORD}" #debug
   echo XCord: "${XCORD}" #debug
-  local NEW_XCORD NEW_YCORD QUIT 
+  local NEW_XCORD NEW_YCORD QUIT
   # shellcheck disable=SC2046
   read -r NEW_XCORD NEW_YCORD QUIT <<< $(movement "${XCORD}" "${YCORD}")
   if [[ "${QUIT}" == 'y' ]]; then
@@ -617,24 +617,25 @@ fi
 
 function main_menu {
   printf "\033c"
+  MENU=( 'New' 'Load' 'Credits' 'Quit' )
   MENU_OPTION=${MENU_OPTION:=0}
   printf "%s\n\n" "${SWORD_IMAGE:=$(< images/sword)}"
-  if [[ ${MENU_OPTION} = 0 ]]; then
+  if [[ ${MENU[$MENU_OPTION]} = 'New' ]]; then
     printf "                              \e[1;32m1. New Game\e[m\n\n"
   else
     printf "                              1. New Game\n\n"
   fi
-  if [[ ${MENU_OPTION} = 1 ]]; then
+  if [[ ${MENU[$MENU_OPTION]} = 'Load' ]]; then
     printf "                              \e[1;32m2. Load Game\e[m\n\n"
   else
     printf "                              2. Load Game\n\n"
   fi
-  if [[ ${MENU_OPTION} = 2 ]]; then
+  if [[ ${MENU[$MENU_OPTION]} = 'Credits' ]]; then
     printf "                              \e[1;32m3. Credits\e[m\n\n"
   else
     printf "                              3. Credits\n\n"
   fi
-  if [[ ${MENU_OPTION} = 3 ]]; then
+  if [[ ${MENU[$MENU_OPTION]} = 'Quit' ]]; then
     printf "                              \e[1;32m4. Quit\e[m\n\n"
   else
     printf "                              4. Quit\n\n"
@@ -655,9 +656,9 @@ function main_menu {
         printf "\033c"
         exit;;
       A|w)
-        MENU_OPTION=$((((MENU_OPTION - 1 + 4)) % 4));;
+        MENU_OPTION=$((((MENU_OPTION - 1)) % ${#MENU[*]}));;
       B|s)
-        MENU_OPTION=$((((MENU_OPTION + 1 + 4)) % 4));;
+        MENU_OPTION=$((((MENU_OPTION + 1)) % ${#MENU[*]}));;
     esac
   else
   case $MENU_OPTION in
