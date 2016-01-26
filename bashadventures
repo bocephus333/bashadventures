@@ -3,8 +3,7 @@
 
 set -o pipefail -o errexit
 
-
-function start {
+title_animation() {
   for LINES in {5..0}; do
     printf "\033c"
     eval printf "%.0s$'\n'" "{0..$LINES}"
@@ -677,7 +676,7 @@ main() {
     esac
   done
   SAVES="${SAVES:=${HOME}/.bashadventures}"
-  start
+  title_animation
   main_menu
 }
 
