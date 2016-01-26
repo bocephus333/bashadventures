@@ -4,9 +4,9 @@
 set -o pipefail -o errexit
 
 title_animation() {
-  for LINES in {5..0}; do
+  for (( i=5; i>0; i-- )); do
     printf "\033c"
-    eval printf "%.0s$'\n'" "{0..$LINES}"
+    eval printf "%.0s$'\n'" "{0..$i}"
     printf "%s" "${SWORD_IMAGE:=$(< images/sword)}"
     sleep .2
   done
