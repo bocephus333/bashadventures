@@ -4,9 +4,9 @@
 set -o pipefail -o errexit
 
 title_animation() {
-  for (( i=5; i>0; i-- )); do
+  for (( LINES=5; LINES>0; LINES-- )); do
     printf "\033c"
-    eval printf "%.0s$'\n'" "{0..$i}"
+    eval printf "%.0s$'\n'" "{0..$LINES}"
     printf "%s" "${SWORD_IMAGE:=$(< images/sword)}"
     sleep .2
   done
@@ -170,60 +170,70 @@ function forest_trail_night_1_move {
 
 brookshire_night_watch_block_west() {
   PLACES=$((15 - NEW_YCORD))
-  for PLACE in $(eval echo "{1..$PLACES}"); do
-  printf "\033c"
-  NEW_GUARD_PLACE=$((15 - PLACE))
-  printf "%s\n" "${MAP}" |\
-  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-       -e "2 s/^(.{27}).(.*)/\1\£\2/" \
-       -  printf "%s\n\n" "${DISPLAY}"
-  printf "YCord: %s\n" "${YCORD}" #debug
-  printf "XCord: %s\n" "${XCORD}" #debuge "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
-       -e "20 s/^(.{57}).(.*)/\1\£\2/"
-  sleep .5
+  for (( PLACE=1; PLACE<=$PLACES; PLACE++ )); do
+    printf "\033c"
+    NEW_GUARD_PLACE=$((15 - PLACE))
+    DISPLAY="$(printf "%s\n" "${MAP}" |\
+    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+         -e "2 s/^(.{27}).(.*)/\1\£\2/" \
+         -e  "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
+         -e "20 s/^(.{57}).(.*)/\1\£\2/")"
+    printf "%s\n\n" "${DISPLAY}"
+    printf "YCord: %s\n" "${YCORD}" #debug
+    printf "XCord: %s\n" "${XCORD}" #debug
+    sleep .5
   done
   printf "\033c"
   printf "%s\n" "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
   printf "Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"\n"
   read -r -s _
-  for PLACE in $(eval echo "{$PLACES..1}"); do
-  printf "\033c"
-  NEW_GUARD_PLACE=$((15 - PLACE))
-  printf "%s\n" "${MAP}" |\
-  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-       -e "2 s/^(.{27}).(.*)/\1\£\2/" \
-       -e "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
-       -e "20 s/^(.{57}).(.*)/\1\£\2/"
-  sleep .5
+  for (( PLACE=$PLACES; PLACE>=1; PLACE-- )); do
+    printf "\033c"
+    NEW_GUARD_PLACE=$((15 - PLACE))
+    DISPLAY="$(printf "%s\n" "${MAP}" |\
+    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+         -e "2 s/^(.{27}).(.*)/\1\£\2/" \
+         -e "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
+         -e "20 s/^(.{57}).(.*)/\1\£\2/")"
+    printf "%s\n\n" "${DISPLAY}"
+    printf "YCord: %s\n" "${YCORD}" #debug
+    printf "XCord: %s\n" "${XCORD}" #debug
+    sleep .5
   done
   ! read -r -t 0.00001 -n 1000
 }
 
 brookshire_night_watch_block_north() {
   PLACES=$((NEW_XCORD - 27))
-  for PLACE in $(eval echo "{1..$PLACES}"); do
-  printf "\033c"
-  NEW_GUARD_PLACE=$((PLACE + 27))
-  printf "%s\n" "${MAP}" |\
-  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-       -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
-       -e "15 s/^(.{1}).(.*)/\1\£\2/" \
-       -e "20 s/^(.{57}).(.*)/\1\£\2/"
-  sleep .5
+  for (( PLACE=1; PLACE<=$PLACES; PLACE++ )); do
+    printf "\033c"
+    NEW_GUARD_PLACE=$((PLACE + 27))
+    DISPLAY="$(printf "%s\n" "${MAP}" |\
+    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+         -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
+         -e "15 s/^(.{1}).(.*)/\1\£\2/" \
+         -e "20 s/^(.{57}).(.*)/\1\£\2/")"
+    printf "%s\n\n" "${DISPLAY}"
+    printf "YCord: %s\n" "${YCORD}" #debug
+    printf "XCord: %s\n" "${XCORD}" #debug
+    sleep .5
   done
   printf "\033c"
   printf "%s\n" "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
   printf "Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"\n"
   read -r -s _
-  for PLACE in $(eval echo "{$PLACES..1}"); do
-  printf "\033c"
-  NEW_GUARD_PLACE=$((PLACE + 27))
-  printf "%s\n" "${MAP}" |\
-  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-       -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
-       -e "15 s/^(.{1}).(.*)/\1\£\2/" \
-       -e "20 s/^(.{57}).(.*)/\1\£\2/"
-  sleep .5
+  for (( PLACE=$PLACES; PLACE>=1; PLACE-- )); do
+    printf "\033c"
+    NEW_GUARD_PLACE=$((PLACE + 27))
+    DISPLAY="$(printf "%s\n" "${MAP}" |\
+    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
+         -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
+         -e "15 s/^(.{1}).(.*)/\1\£\2/" \
+         -e "20 s/^(.{57}).(.*)/\1\£\2/")"
+    printf "%s\n\n" "${DISPLAY}"
+    printf "YCord: %s\n" "${YCORD}" #debug
+    printf "XCord: %s\n" "${XCORD}" #debug
+    sleep .5
   done
   ! read -r -t 0.00001 -n 1000
 }
@@ -296,7 +306,7 @@ brookshire_barn_door_night_1() {
 
 brookshire_night_1_move() {
   printf "\033c"
-  sed -i s/.*save.*/"save brookshire_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"S
+  sed -i s/.*save.*/"save brookshire_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
   NORTH_GUARD_LOC=27
   DISPLAY="$(printf "%s\n" "${MAP}" |\
   sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
@@ -425,29 +435,26 @@ function stable_night_1_move {
 }
 
 function new_game {
-  printf "\033c"
   if [ ! -d "${SAVES}" ]; then
       mkdir "${SAVES}"
   fi
-  COUNT="1"
   readarray STORY_INTRO < story/intro
   LENGTH="${#STORY_INTRO[*]}"
-  while [[ $COUNT -lt $LENGTH ]]; do
-      LINES=$((LENGTH - COUNT))
-      eval printf "%.0s$'\n'" "{1..$LINES}"
-      printf " %s" "${STORY_INTRO[*]:0:$COUNT}"
-      sleep .5
+  for (( LINES=$LENGTH; LINES>=0; LINES-- )); do
       printf "\033c"
-      COUNT=$((COUNT + 1))
+      eval printf "%.0s$'\n'" "{0..$LINES}"
+      printf " %s" "${STORY_INTRO[*]:0:((LENGTH - LINES))}"
+      sleep .5
   done
-  printf " %s" "${STORY_INTRO[*]:0:$COUNT}"
+  printf "\033c"
+  printf " %s" "${STORY_INTRO[*]:0:$LENGTH}"
   read -r -s _
-  for PLACE in {12..7}; do
+  for (( PLACE=12; PLACE>=7; PLACE-- )); do
   printf "\033c"
   sed -re "${PLACE} s/^(.{27}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable_night_1_map
   sleep .5
   done
-  for PLACE in {26..22}; do
+  for (( PLACE=26; PLACE>=22; PLACE-- )); do
   printf "\033c"
   sed -re "7 s/^(.{$PLACE}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable_night_1_map
   sleep .5
