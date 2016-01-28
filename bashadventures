@@ -170,7 +170,7 @@ function forest_trail_night_1_move {
 
 brookshire_night_watch_block_west() {
   PLACES=$((15 - NEW_YCORD))
-  for (( PLACE=1; PLACE<=$PLACES; PLACE++ )); do
+  for (( PLACE=1; PLACE<=PLACES; PLACE++ )); do
     printf "\033c"
     NEW_GUARD_PLACE=$((15 - PLACE))
     DISPLAY="$(printf "%s\n" "${MAP}" |\
@@ -187,7 +187,7 @@ brookshire_night_watch_block_west() {
   printf "%s\n" "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
   printf "Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"\n"
   read -r -s _
-  for (( PLACE=$PLACES; PLACE>=1; PLACE-- )); do
+  for (( PLACE=PLACES; PLACE>=1; PLACE-- )); do
     printf "\033c"
     NEW_GUARD_PLACE=$((15 - PLACE))
     DISPLAY="$(printf "%s\n" "${MAP}" |\
@@ -205,7 +205,7 @@ brookshire_night_watch_block_west() {
 
 brookshire_night_watch_block_north() {
   PLACES=$((NEW_XCORD - 27))
-  for (( PLACE=1; PLACE<=$PLACES; PLACE++ )); do
+  for (( PLACE=1; PLACE<=PLACES; PLACE++ )); do
     printf "\033c"
     NEW_GUARD_PLACE=$((PLACE + 27))
     DISPLAY="$(printf "%s\n" "${MAP}" |\
@@ -222,7 +222,7 @@ brookshire_night_watch_block_north() {
   printf "%s\n" "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
   printf "Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"\n"
   read -r -s _
-  for (( PLACE=$PLACES; PLACE>=1; PLACE-- )); do
+  for (( PLACE=PLACES; PLACE>=1; PLACE-- )); do
     printf "\033c"
     NEW_GUARD_PLACE=$((PLACE + 27))
     DISPLAY="$(printf "%s\n" "${MAP}" |\
@@ -440,7 +440,7 @@ function new_game {
   fi
   readarray STORY_INTRO < story/intro
   LENGTH="${#STORY_INTRO[*]}"
-  for (( LINES=$LENGTH; LINES>=0; LINES-- )); do
+  for (( LINES=LENGTH; LINES>=0; LINES-- )); do
       printf "\033c"
       eval printf "%.0s$'\n'" "{0..$LINES}"
       printf " %s" "${STORY_INTRO[*]:0:((LENGTH - LINES))}"
