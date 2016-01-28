@@ -8,7 +8,7 @@ title_animation() {
     printf "\033c"
     eval printf "%.0s$'\n'" "{0..$LINES}"
     printf "%s" "${SWORD_IMAGE:=$(< images/sword)}"
-    ! read -t .2
+    ! read -r -t .2
   done
   ! read -r -t 0.1 -n 1000
 }
@@ -181,7 +181,7 @@ brookshire_night_watch_block_west() {
     printf "%s\n\n" "${DISPLAY}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
-    ! read -t .5
+    ! read -r -t .5
   done
   printf "\033c"
   printf "%s\n" "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
@@ -198,7 +198,7 @@ brookshire_night_watch_block_west() {
     printf "%s\n\n" "${DISPLAY}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
-    ! read -t .5
+    ! read -r -t .5
   done
   ! read -r -t 0.00001 -n 1000
 }
@@ -216,7 +216,7 @@ brookshire_night_watch_block_north() {
     printf "%s\n\n" "${DISPLAY}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
-    ! read -t .5
+    ! read -r -t .5
   done
   printf "\033c"
   printf "%s\n" "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
@@ -233,7 +233,7 @@ brookshire_night_watch_block_north() {
     printf "%s\n\n" "${DISPLAY}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
-    ! read -t .5
+    ! read -r -t .5
   done
   ! read -r -t 0.00001 -n 1000
 }
@@ -348,8 +348,8 @@ brookshire_night_1_move() {
       brookshire_guard_tower_night_1;;
     'E')
       printf "\033c"
-      printf "%s\n" "${NIGHT_WATCH_! read -tING_IMAGE:=$(< images/night_watch_! read -ting)}"
-      printf "You find a guard ! read -ting at his post.\n"
+      printf "%s\n" "${NIGHT_WATCH_SLEEPING_IMAGE:=$(< images/night_watch_sleeping)}"
+      printf "You find a guard sleeping at his post.\n"
       read -r -s _;;
     'w')
       brookshire_night_watch_block_west;;
@@ -444,7 +444,7 @@ function new_game {
       printf "\033c"
       eval printf "%.0s$'\n'" "{0..$LINES}"
       printf " %s" "${STORY_INTRO[*]:0:((LENGTH - LINES))}"
-      ! read -t .5
+      ! read -r -t .5
   done
   printf "\033c"
   printf " %s" "${STORY_INTRO[*]:0:$LENGTH}"
@@ -452,12 +452,12 @@ function new_game {
   for (( PLACE=12; PLACE>=7; PLACE-- )); do
   printf "\033c"
   sed -re "${PLACE} s/^(.{27}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable_night_1_map
-  ! read -t .5
+  ! read -r -t .5
   done
   for (( PLACE=26; PLACE>=22; PLACE-- )); do
   printf "\033c"
   sed -re "7 s/^(.{$PLACE}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable_night_1_map
-  ! read -t .5
+  ! read -r -t .5
   done
   ! read -r -t 0.1 -n 1000
   printf "\033c"
@@ -492,7 +492,7 @@ function new_game {
   printf "\033c"
   echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
   echo Grumpy Stable Master: \"Yeah, well, you picked the wrong
-  echo stable to ! read -t in, "${NAME}"\!\"
+  echo stable to sleep in, "${NAME}"\!\"
   read -r -s _
   XCORD=20
   YCORD=7
