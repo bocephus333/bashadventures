@@ -461,16 +461,16 @@ function new_game {
   done
   ! read -r -t 0.1 -n 1000
   printf "\033c"
-  echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
-  echo Grumpy Stable Master: \"Hey, you\! What\'s your name, kid?\"
+  printf "%s\n" "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
+  printf "Grumpy Stable Master: \"Hey, you\! What\'s your name, kid?\"\n"
   function name {
-      echo -n "Name: "
+      printf "Name: "
       read -r -a NAME
       if [[ "${NAME}" ]]; then
           if [[ ${#NAME[*]} = "1" ]]; then
               NAME="${NAME[*]}"
               if [[ -f "${SAVES}/${NAME}" ]]; then
-                  echo Sorry, there is already a user by that name, try another.
+                  printf "Sorry, there is already a user by that name, try another.\n"
                   name
               else
                   printf "\033c"
@@ -481,18 +481,18 @@ function new_game {
                   printf "%s" "$(<save.template)" > "${SAVES}/${NAME}"
               fi
           else
-              echo You can only have a one word name.
+              printf "You can only have a one word name.\n"
           fi
       else
-          echo Sorry, you must have a name to continue\!
+          printf "Sorry, you must have a name to continue\!\n"
           name
       fi
   }
   name
   printf "\033c"
-  echo "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
-  echo Grumpy Stable Master: \"Yeah, well, you picked the wrong
-  echo stable to sleep in, "${NAME}"\!\"
+  printf "%s\n ""${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
+  printf "Grumpy Stable Master: \"Yeah, well, you picked the wrong\n"
+  printf "stable to sleep in, %s\!\n" "${NAME}"
   read -r -s _
   XCORD=20
   YCORD=7
@@ -559,10 +559,8 @@ function load_game {
     printf "    %s - %s\n\n" "${SAVED_GAMES[((LINE + 1))]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[((LINE + 1))]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
     printf "    %s - %s\n\n" "${SAVED_GAMES[((LINE + 2))]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[((LINE + 2))]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
   fi
-  echo
-  echo
-  echo "  Press w to go up, s to go down, "
-  echo -n "  d or enter to select, a or b to go back. "
+  printf "\n\n  Press w to go up, s to go down, \n"
+  printf "  d or enter to select, a or b to go back. "
   read -r -s -n 1 LOAD
   if [[ "${LOAD}" ]]; then
     case "${LOAD}" in
