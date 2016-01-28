@@ -23,6 +23,40 @@ function not_done {
   read -r -s _
 }
 
+display_box() {
+  OLDIFS="${IFS}"
+  IFS=$'\n'
+  DISPLAY_ARRAY=( ${DISPLAY} )
+  DISPLAY="$(printf "%s\n" "${DISPLAY_BOX:=$(< interface/display_box)}" |\
+  sed -re "2 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[0]}\2/" \
+       -e "3 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[1]}\2/" \
+       -e "4 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[2]}\2/" \
+       -e "5 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[3]}\2/" \
+       -e "6 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[4]}\2/" \
+       -e "7 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[5]}\2/" \
+       -e "8 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[6]}\2/" \
+       -e "9 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[7]}\2/" \
+       -e "10 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[8]}\2/" \
+       -e "11 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[9]}\2/" \
+       -e "12 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[10]}\2/" \
+       -e "13 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[11]}\2/" \
+       -e "14 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[12]}\2/" \
+       -e "15 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[13]}\2/" \
+       -e "16 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[14]}\2/" \
+       -e "17 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[15]}\2/" \
+       -e "18 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[16]}\2/" \
+       -e "19 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[17]}\2/" \
+       -e "20 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[18]}\2/" \
+       -e "21 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[19]}\2/" \
+       -e "22 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[20]}\2/" \
+       -e "23 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[21]}\2/" \
+       -e "24 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[22]}\2/" \
+       -e "25 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[23]}\2/" \
+       -e "26 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[24]}\2/" \
+       -e "27 s/^(.{1}).{59}(.*)/\1${DISPLAY_ARRAY[25]}\2/")"
+  IFS="${OLDIFS}"
+}
+
 quit_prompt() {
   printf "\033c"
   printf "%s\n" "${DISPLAY}" | \
@@ -313,6 +347,7 @@ brookshire_night_1_move() {
      -e "2 s/^(.{$NORTH_GUARD_LOC}).(.*)/\1\£\2/" \
      -e "15 s/^(.{1}).(.*)/\1\£\2/" \
      -e "20 s/^(.{57}).(.*)/\1\£\2/")"
+  display_box
   printf "%s\n\n" "${DISPLAY}"
   printf "YCord: %s\n" "${YCORD}" #debug
   printf "XCord: %s\n" "${XCORD}" #debug
