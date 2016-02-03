@@ -25,11 +25,11 @@ function not_done {
 
 quit_prompt() {
   printf "\033c"
-  printf "%s\n" "${DISPLAY}" | \
-  sed -re '12 s/^(.{19}).{23}(.*)/\1\┌─────────────────────┐\2/' \
-       -e '13 s/^(.{19}).{23}(.*)/\1\│    Are you sure     │\2/' \
-       -e '14 s/^(.{19}).{23}(.*)/\1\│ want to quit? (y|n) │\2/' \
-       -e '15 s/^(.{19}).{23}(.*)/\1\└─────────────────────┘\2/'
+  DISPLAY[11]="${DISPLAY[11]:0:19}┌─────────────────────┐${DISPLAY[11]:42}"
+  DISPLAY[12]="${DISPLAY[12]:0:19}│    Are you sure     │${DISPLAY[12]:42}"
+  DISPLAY[13]="${DISPLAY[13]:0:19}│ want to quit? (y|n) │${DISPLAY[13]:42}"
+  DISPLAY[14]="${DISPLAY[14]:0:19}└─────────────────────┘${DISPLAY[14]:42}"
+  printf "%s" "${DISPLAY[@]}"
   read -r -s -n 1 QUIT
   if [[ "${QUIT}" = 'y' ]]; then
     main_menu
@@ -87,16 +87,17 @@ function cave_cliff {
 
 forest_trail_cave_night_1_move() {
   printf "\033c"
-  sed -i s/.*save.*/"save forest_trail_cave_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
-  Y=${YCORD:=23}
+  CHAR_SHEET[0]="save forest_trail_cave_night_1 $XCORD $YCORD\n"
+  printf "%s" "${CHAR_SHEET[@]}" > "${SAVES}/${NAME}"
+  Y=$((${YCORD:=23} - 1))
   X=$((${XCORD:=25} - 3))
-  DISPLAY="$(printf "%s\n" "${MAP}" | \
-  sed -re "$((Y - 2)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y - 3))]:${X}:7}\2/" \
-     -e "$((Y - 1)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y - 2))]:${X}:7}\2/" \
-     -e "${Y}       s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y - 1))]:${X}:3}\@${MAP_HIDDEN[$((Y - 1))]:$((X + 4)):3}\2/" \
-     -e "$((Y + 1)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$Y]:${X}:7}\2/" \
-     -e "$((Y + 2)) s/^(.{${X}})(.*)/\1${MAP_HIDDEN[$((Y + 1))]:${X}:7}\2/")"
-  printf "%s\n\n" "${DISPLAY}"
+  DISPLAY=( "${MAP[@]}" )
+  DISPLAY[$((Y - 2))]="${MAP[$((Y - 2))]:0:${X}}${MAP_HIDDEN[$((Y - 2))]:${X}:7}${MAP[$((Y - 2))]:$((X + 7))}"
+  DISPLAY[$((Y - 1))]="${MAP[$((Y - 1))]:0:${X}}${MAP_HIDDEN[$((Y - 1))]:${X}:7}${MAP[$((Y - 1))]:$((X + 7))}"
+  DISPLAY[$Y]="${MAP[$Y]:0:${X}}${MAP_HIDDEN[$Y]:${X}:3}@${MAP_HIDDEN[$Y]:$((X + 4)):3}${MAP[$Y]:$((X + 7))}"
+  DISPLAY[$((Y + 1))]="${MAP[$((Y + 1))]:0:${X}}${MAP_HIDDEN[$((Y + 1))]:${X}:7}${MAP[$Y]:$((X + 7))}"
+  DISPLAY[$((Y + 2))]="${MAP[$((Y + 2))]:0:${X}}${MAP_HIDDEN[$((Y + 2))]:${X}:7}${MAP[$Y]:$((X + 7))}"
+  printf "%s" "${DISPLAY[@]}"
   printf "YCord: %s\n" "${YCORD}" #debug
   printf "XCord: %s\n" "${XCORD}" #debug
   local NEW_XCORD NEW_YCORD QUIT
@@ -126,14 +127,11 @@ function forest_trail_sign {
 
 function forest_trail_night_1_move {
   printf "\033c"
-  sed -i s/.*save.*/"save forest_trail_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
-  DISPLAY="$(printf "%s\n" "${MAP}" |\
-  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-     -e "10 s/^(.{43}).(.*)/\1\ж\2/" \
-     -e "4 s/^(.{48}).(.*)/\1\ж\2/" \
-     -e "5 s/^(.{13}).(.*)/\1\ж\2/" \
-     -e "12 s/^(.{26}).(.*)/\1\ж\2/")"
-  printf "%s\n\n" "${DISPLAY}"
+  CHAR_SHEET[0]="save forest_trail_night_1 $XCORD $YCORD\n"
+  printf "%s" "${CHAR_SHEET[@]}" > "${SAVES}/${NAME}"
+  DISPLAY=( "${MAP[@]}" )
+  DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
+  printf "%s" "${DISPLAY[@]}"
   printf "YCord: %s\n" "${YCORD}" #debug
   printf "XCord: %s\n" "${XCORD}" #debug
   local NEW_XCORD NEW_YCORD QUIT
@@ -154,14 +152,14 @@ function forest_trail_night_1_move {
   'Ʌ')
     YCORD=23
     XCORD=25
-    MAP="${FOREST_TRAIL_CAVE_NIGHT_1_MAP:=$(< places/forest_trail_cave_night_1_map)}"
+    readarray MAP < places/forest_trail_cave_night_1_map
     readarray MAP_HIDDEN < places/forest_trail_cave_night_1_hidden
     readarray MAP_TERRIAN < places/forest_trail_cave_night_1_terrian
     forest_trail_cave_night_1_move;;
   '<')
     YCORD=19
     XCORD=57
-    MAP="${BROOKSHIRE_NIGHT_1_MAP:=$(< places/brookshire_night_1_map)}"
+    readarray MAP < places/brookshire_night_1_map
     readarray MAP_TERRIAN < places/brookshire_night_1_terrian
     brookshire_night_1_move;;
   esac
@@ -173,12 +171,12 @@ brookshire_night_watch_block_west() {
   for (( PLACE=1; PLACE<=PLACES; PLACE++ )); do
     printf "\033c"
     NEW_GUARD_PLACE=$((15 - PLACE))
-    DISPLAY="$(printf "%s\n" "${MAP}" |\
-    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-         -e "2 s/^(.{27}).(.*)/\1\£\2/" \
-         -e  "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
-         -e "20 s/^(.{57}).(.*)/\1\£\2/")"
-    printf "%s\n\n" "${DISPLAY}"
+    DISPLAY=( "${MAP[@]}" )
+    DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
+    DISPLAY[1]="${DISPLAY[1]:0:27}£${DISPLAY[1]:28}"
+    DISPLAY[$((NEW_GUARD_PLACE - 1))]="${DISPLAY[$((NEW_GUARD_PLACE - 1))]:0:1}£${DISPLAY[$((NEW_GUARD_PLACE - 1))]:2}"
+    DISPLAY[20]="${DISPLAY[20]:0:57}£${DISPLAY[20]:58}"
+    printf "%s" "${DISPLAY[@]}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
     ! read -r -t .5
@@ -190,12 +188,12 @@ brookshire_night_watch_block_west() {
   for (( PLACE=PLACES; PLACE>=1; PLACE-- )); do
     printf "\033c"
     NEW_GUARD_PLACE=$((15 - PLACE))
-    DISPLAY="$(printf "%s\n" "${MAP}" |\
-    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-         -e "2 s/^(.{27}).(.*)/\1\£\2/" \
-         -e "${NEW_GUARD_PLACE} s/^(.{1}).(.*)/\1\£\2/" \
-         -e "20 s/^(.{57}).(.*)/\1\£\2/")"
-    printf "%s\n\n" "${DISPLAY}"
+    DISPLAY=( "${MAP[@]}" )
+    DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
+    DISPLAY[1]="${DISPLAY[1]:0:27}£${DISPLAY[1]:28}"
+    DISPLAY[$((NEW_GUARD_PLACE - 1))]="${DISPLAY[$((NEW_GUARD_PLACE - 1))]:0:1}£${DISPLAY[$((NEW_GUARD_PLACE - 1))]:2}"
+    DISPLAY[20]="${DISPLAY[20]:0:57}£${DISPLAY[20]:58}"
+    printf "%s" "${DISPLAY[@]}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
     ! read -r -t .5
@@ -208,12 +206,12 @@ brookshire_night_watch_block_north() {
   for (( PLACE=1; PLACE<=PLACES; PLACE++ )); do
     printf "\033c"
     NEW_GUARD_PLACE=$((PLACE + 27))
-    DISPLAY="$(printf "%s\n" "${MAP}" |\
-    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-         -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
-         -e "15 s/^(.{1}).(.*)/\1\£\2/" \
-         -e "20 s/^(.{57}).(.*)/\1\£\2/")"
-    printf "%s\n\n" "${DISPLAY}"
+    DISPLAY=( "${MAP[@]}" )
+    DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
+    DISPLAY[1]="${DISPLAY[1]:0:$NEW_GUARD_PLACE}£${DISPLAY[1]:$((NEW_GUARD_PLACE + 1))}"
+    DISPLAY[14]="${DISPLAY[14]:0:1}£${DISPLAY[14]:2}"
+    DISPLAY[20]="${DISPLAY[20]:0:57}£${DISPLAY[20]:58}"
+    printf "%s" "${DISPLAY[@]}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
     ! read -r -t .5
@@ -225,12 +223,12 @@ brookshire_night_watch_block_north() {
   for (( PLACE=PLACES; PLACE>=1; PLACE-- )); do
     printf "\033c"
     NEW_GUARD_PLACE=$((PLACE + 27))
-    DISPLAY="$(printf "%s\n" "${MAP}" |\
-    sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-         -e "2 s/^(.{$NEW_GUARD_PLACE}).(.*)/\1\£\2/" \
-         -e "15 s/^(.{1}).(.*)/\1\£\2/" \
-         -e "20 s/^(.{57}).(.*)/\1\£\2/")"
-    printf "%s\n\n" "${DISPLAY}"
+    DISPLAY=( "${MAP[@]}" )
+    DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
+    DISPLAY[1]="${DISPLAY[1]:0:$NEW_GUARD_PLACE}£${DISPLAY[1]:$((NEW_GUARD_PLACE + 1))}"
+    DISPLAY[14]="${DISPLAY[14]:0:1}£${DISPLAY[14]:2}"
+    DISPLAY[20]="${DISPLAY[20]:0:57}£${DISPLAY[20]:58}"
+    printf "%s" "${DISPLAY[@]}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
     ! read -r -t .5
@@ -264,7 +262,7 @@ brookshire_sign_market() {
 
 brookshire_sign_temple() {
   printf "\033c"
-  prinf "%s\n" "${BROOKSHIRE_SIGN_TEMPLE_IMAGE:=$(< images/brookshire_sign_temple)}"
+  printf "%s\n" "${BROOKSHIRE_SIGN_TEMPLE_IMAGE:=$(< images/brookshire_sign_temple)}"
   read -r -s _
 }
 
@@ -305,16 +303,15 @@ brookshire_barn_door_night_1() {
 }
 
 brookshire_night_1_move() {
+  CHAR_SHEET[0]="save brookshire_night_1 $XCORD $YCORD\n"
+  printf "%s" "${CHAR_SHEET[@]}" > "${SAVES}/${NAME}"
+  DISPLAY=( "${MAP[@]}")
+  DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
+  DISPLAY[1]="${DISPLAY[1]:0:27}£${DISPLAY[1]:28}"
+  DISPLAY[14]="${DISPLAY[14]:0:1}£${DISPLAY[14]:2}"
+  DISPLAY[20]="${DISPLAY[20]:0:57}£${DISPLAY[20]:58}"
   printf "\033c"
-  sed -i s/.*save.*/"save brookshire_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
-  NORTH_GUARD_LOC=27
-  DISPLAY="$(printf "%s\n" "${MAP}" |\
-  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-     -e "2 s/^(.{$NORTH_GUARD_LOC}).(.*)/\1\£\2/" \
-     -e "15 s/^(.{1}).(.*)/\1\£\2/" \
-     -e "20 s/^(.{57}).(.*)/\1\£\2/")"
-  #display_box
-  printf "%s\n\n" "${DISPLAY}"
+  printf "%s" "${DISPLAY[@]}"
   printf "YCord: %s\n" "${YCORD}" #debug
   printf "XCord: %s\n" "${XCORD}" #debug
   local NEW_XCORD NEW_YCORD QUIT
@@ -333,7 +330,7 @@ brookshire_night_1_move() {
     'e')
       YCORD=10
       XCORD=2
-      MAP="${FOREST_TRAIL_TRAIL_NIGHT_1_MAP:=$(< places/forest_trail_night_1_map)}"
+      readarray MAP < places/forest_trail_night_1_map
       readarray MAP_TERRIAN < places/forest_trail_night_1_terrian
       forest_trail_night_1_move;;
     'G')
@@ -373,15 +370,15 @@ brookshire_night_1_move() {
 }
 
 function brookshire_night_1_intro {
-  YCORD=23
-  XCORD=21
   printf "\033c"
   printf "%s\n" "${BROOKSHIRE_BARN_NIGHT_IMAGE:=$(< images/barn_night)}"
   printf "\n\nYou can hear the stable master coming.\n"
   printf "Better find somewhere to hide\!\n\n"
   printf "  Press enter to continue.\n"
   read -r -s _
-  MAP="${BROOKSHIRE_NIGHT_1_MAP:=$(< places/brookshire_night_1_map)}"
+  YCORD=23
+  XCORD=21
+  readarray MAP < places/brookshire_night_1_map
   readarray MAP_TERRIAN < places/brookshire_night_1_terrian
   brookshire_night_1_move
 }
@@ -401,12 +398,13 @@ function angry_cow {
 
 function stable_night_1_move {
   printf "\033c"
-  sed -i s/.*save.*/"save stable_night_1 $XCORD $YCORD"/g "${SAVES}/${NAME}"
-  DISPLAY="$(printf "%s\n" "${MAP}" |\
-  sed -re "$YCORD s/^(.{$XCORD}).(.*)/\1\@\2/" \
-       -e '7s/^(.{22}).(.*)/\1\&\2/')"
-  printf "%s\n\n" "${DISPLAY}"
-  printf "Quick\! Run out of the stable and get away from the stable master\!\n"
+  CHAR_SHEET[0]="save stable_night_1 $XCORD $YCORD\n"
+  printf "%s" "${CHAR_SHEET[0]}" > "${SAVES}/${NAME}"
+  DISPLAY=( "${MAP[@]}" )
+  DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
+  DISPLAY[6]="${DISPLAY[6]:0:22}&${DISPLAY[6]:23}"
+  printf "%s" "${DISPLAY[@]}"
+  printf "\nQuick! Run out of the stable and get away from the stable master!\n"
   printf "YCord: %s\n" "${YCORD}" #debug
   printf "XCord: %s\n" "${XCORD}" #debug
   local NEW_XCORD NEW_YCORD QUIT
@@ -450,20 +448,27 @@ function new_game {
   printf "\033c"
   printf " %s" "${STORY_INTRO[*]:0:$LENGTH}"
   read -r -s _
-  for (( PLACE=12; PLACE>=7; PLACE-- )); do
-  printf "\033c"
-  sed -re "${PLACE} s/^(.{27}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable_night_1_map
-  ! read -r -t .5
+  readarray MAP < places/stable_night_1_map
+  for (( PLACE=11; PLACE>=6; PLACE-- )); do
+    DISPLAY=( "${MAP[@]}" )
+    DISPLAY[6]="${DISPLAY[6]:0:19}@${DISPLAY[6]:20}"
+    DISPLAY[${PLACE}]="${DISPLAY[${PLACE}]:0:27}&${DISPLAY[${PLACE}]:28}"
+    printf "\033c"
+    printf "%s" "${DISPLAY[@]}"
+    ! read -r -t .5
   done
   for (( PLACE=26; PLACE>=22; PLACE-- )); do
-  printf "\033c"
-  sed -re "7 s/^(.{$PLACE}).(.*)/\1\&\2/" -e '7s/^(.{19}).(.*)/\1\@\2/' places/stable_night_1_map
-  ! read -r -t .5
+    DISPLAY=( "${MAP[@]}" )
+    DISPLAY[6]="${DISPLAY[6]:0:19}@${DISPLAY[6]:20}"
+    DISPLAY[6]="${DISPLAY[6]:0:${PLACE}}&${DISPLAY[6]:$((PLACE + 1))}"
+    printf "\033c"
+    printf "%s" "${DISPLAY[@]}"
+    ! read -r -t .5
   done
   ! read -r -t 0.1 -n 1000
   printf "\033c"
   printf "%s\n" "${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
-  printf "Grumpy Stable Master: \"Hey, you\! What\'s your name, kid?\"\n"
+  printf "Grumpy Stable Master: \"Hey, you! What's your name, kid?\"\n"
   function name {
       printf "Name: "
       read -r -a NAME
@@ -479,13 +484,14 @@ function new_game {
                   printf "       From now on all your actions will be saved automatically\n"
                   printf "                   Press ENTER if you understand."
                   read -r -s _
-                  printf "%s" "$(<save.template)" > "${SAVES}/${NAME}"
+                  readarray CHAR_SHEET < save.template
+                  printf "%s" "${CHAR_SHEET[@]}" > "${SAVES}/${NAME}"
               fi
           else
               printf "You can only have a one word name.\n"
           fi
       else
-          printf "Sorry, you must have a name to continue\!\n"
+          printf "Sorry, you must have a name to continue!\n"
           name
       fi
   }
@@ -493,11 +499,11 @@ function new_game {
   printf "\033c"
   printf "%s\n ""${GRUMPY_STABLE_MASTER_IMAGE:=$(< images/grumpy_stable_master)}"
   printf "Grumpy Stable Master: \"Yeah, well, you picked the wrong\n"
-  printf "stable to sleep in, %s\!\n" "${NAME}"
+  printf "stable to sleep in, %s!\n" "${NAME}"
   read -r -s _
   XCORD=20
   YCORD=7
-  MAP="${STABLE_NIGHT_1_MAP:=$(< places/stable_night_1_map)}"
+  readarray MAP < places/stable_night_1_map
   readarray MAP_TERRIAN < places/stable_night_1_terrian
   stable_night_1_move
 }
@@ -514,100 +520,59 @@ function load_game {
   else
     printf "\033c"
     printf "\n\n\n      Saved Games:\n\n"
-    if [ ${#SAVED_GAMES[*]} -eq 1 ]; then
-      printf "\e[1;32m    %s - %s\e[m\n\n" "${SAVED_GAMES[$LINE]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-      read -r -s -n 1 LOAD
-      if [[ "${LOAD}" ]]; then
-        case "${LOAD}" in
-          d|C)
-            XCORD="$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 3 -d ' ')"
-            YCORD="$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 4 -d ' ')"
-            NAME="${SAVED_GAMES[$LINE]##*/}"
-            SAVE="$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 2 -d ' ')"
-            MAP="$(< places/"${SAVE}"_map)"
-            if [[ -f "places/${SAVE}_hidden" ]]; then
-              readarray MAP_HIDDEN < "places/${SAVE}_hidden"
-            fi
-            readarray MAP_TERRIAN < "places/${SAVE}_terrian"
-            "${SAVE}"_move;;
-          a|D)
-            main_menu;;
-          *)
-            load_game;;
-        esac
-      else
-        XCORD="$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 3 -d ' ')"
-        YCORD="$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 4 -d ' ')"
+    readarray CHAR_SHEET_0 < "${SAVED_GAMES[$LINE]}"
+    CHAR_0_SAVE=( ${CHAR_SHEET_0[0]} )
+    printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[LINE]##*/} "${CHAR_0_SAVE[1]//_/ }"
+    if [[ ${#SAVED_GAMES[*]} -gt 1 ]]; then
+      readarray CHAR_SHEET_1 < "${SAVED_GAMES[$(($((LINE + 1)) % ${#SAVED_GAMES[*]}))]}"
+      CHAR_1_SAVE=( ${CHAR_SHEET_1[0]} )
+      printf "    %s - %s\n\n" ${SAVED_GAMES[$(($((LINE + 1)) % ${#SAVED_GAMES[*]}))]##*/} "${CHAR_1_SAVE[1]//_/ }"
+      if [[ ${#SAVED_GAMES[*]} -gt 2 ]]; then
+        readarray CHAR_SHEET_2 < "${SAVED_GAMES[$(($((LINE + 2)) % ${#SAVED_GAMES[*]}))]}"
+        CHAR_2_SAVE=( ${CHAR_SHEET_2[0]} )
+        printf "    %s - %s\n\n\n" ${SAVED_GAMES[$(($((LINE + 2)) % ${#SAVED_GAMES[*]}))]##*/} "${CHAR_2_SAVE[1]//_/ }"
+      fi
+    fi
+    printf "\n\n  Press w to go up, s to go down, \n"
+    printf "  d or enter to select, a or b to go back. "
+    read -r -s -n 1 LOAD
+    if [[ "${LOAD}" ]]; then
+      case "${LOAD}" in
+      w|A)
+        LINE="$(($((LINE - 1)) % ${#SAVED_GAMES[*]}))"
+        load_game;;
+      s|B)
+        LINE="$(($((LINE + 1)) % ${#SAVED_GAMES[*]}))"
+        load_game;;
+      d|C|'')
+        XCORD=${CHAR_0_SAVE[2]}
+        YCORD=${CHAR_0_SAVE[3]}
         NAME="${SAVED_GAMES[$LINE]##*/}"
-        SAVE="$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 2 -d ' ')"
-        MAP="$(< "places/${SAVE}_map")"
+        SAVE=${CHAR_0_SAVE[1]}
+        readarray MAP < places/"${SAVE}"_map
         if [[ -f "places/${SAVE}_hidden" ]]; then
           readarray MAP_HIDDEN < "places/${SAVE}_hidden"
         fi
         readarray MAP_TERRIAN < "places/${SAVE}_terrian"
-        "${SAVE}"_move
-      fi
-  elif [[ $LINE -gt 0 ]] && [[ $LINE -lt $((${#SAVED_GAMES[*]} - 1)) ]] ; then
-    printf "    %s - %s\n\n" "${SAVED_GAMES[((LINE - 1))]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[((LINE - 1))]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-    printf "\e[1;32m    %s - %s\e[m\n\n" "${SAVED_GAMES[$LINE]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-    printf "    %s - %s\n\n" "${SAVED_GAMES[((LINE + 1))]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[((LINE + 1))]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-  elif  [[ $LINE -eq $((${#SAVED_GAMES[*]} - 1)) ]]; then
-    printf "    %s - %s\n\n" "${SAVED_GAMES[((LINE - 2))]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[((LINE - 2))]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-    printf "    %s - %s\n\n" "${SAVED_GAMES[((LINE - 1))]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[((LINE - 1))]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-    printf "\e[1;32m    %s - %s\e[m\n\n" "${SAVED_GAMES[$LINE]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-  elif [[ ${LINE} -eq 0 ]]; then
-    printf "\e[1;32m    %s - %s\e[m\n\n" "${SAVED_GAMES[$LINE]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-    printf "    %s - %s\n\n" "${SAVED_GAMES[((LINE + 1))]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[((LINE + 1))]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-    printf "    %s - %s\n\n" "${SAVED_GAMES[((LINE + 2))]##*/}" "$(sed -n '/save/p' "${SAVED_GAMES[((LINE + 2))]}" | cut -f 2 -d ' ' | sed 's/_/ /g')"
-  fi
-  printf "\n\n  Press w to go up, s to go down, \n"
-  printf "  d or enter to select, a or b to go back. "
-  read -r -s -n 1 LOAD
-  if [[ "${LOAD}" ]]; then
-    case "${LOAD}" in
-    w|A)
-      if [[ ${LINE} -eq 0 ]]; then
-        load_game
-      else
-        LINE=$((LINE - 1))
-        load_game
-      fi;;
-    s|B)
-      if [[ $LINE -lt $((${#SAVED_GAMES[*]} - 1)) ]]; then
-        LINE=$((LINE + 1))
-        load_game
-      else
-        load_game
-      fi;;
-    d|C|'')
-      XCORD=$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 3 -d ' ')
-      YCORD=$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 4 -d ' ')
+        "${SAVE}"_move;;
+      a|D)
+        main_menu;;
+      *)
+        load_game;;
+      esac
+    else
+      XCORD=${CHAR_0_SAVE[2]}
+      YCORD=${CHAR_0_SAVE[3]}
       NAME="${SAVED_GAMES[$LINE]##*/}"
-      SAVE=$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 2 -d ' ')
-      MAP="$(< "places/${SAVE}_map")"
+      SAVE=${CHAR_0_SAVE[1]}
+      readarray MAP < places/"${SAVE}"_map
       if [[ -f "places/${SAVE}_hidden" ]]; then
         readarray MAP_HIDDEN < "places/${SAVE}_hidden"
       fi
       readarray MAP_TERRIAN < "places/${SAVE}_terrian"
-      "${SAVE}"_move;;
-    a|D)
-      main_menu;;
-    *)
-      load_game;;
-    esac
-  else
-  XCORD=$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 3 -d ' ')
-  YCORD=$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 4 -d ' ')
-  NAME="${SAVED_GAMES[$LINE]##*/}"
-  SAVE=$(sed -n '/save/p' "${SAVED_GAMES[$LINE]}" | cut -f 2 -d ' ')
-  MAP="$(< "places/${SAVE}_map")"
-  if [[ -f "places/${SAVE}_hidden" ]]; then
-    readarray MAP_HIDDEN < "places/${SAVE}_hidden"
+      "${SAVE}"_move
+    fi
   fi
-  readarray MAP_TERRIAN < "places/${SAVE}_terrian"
-  "${SAVE}"_move
-  fi
-fi
 }
 
 function main_menu {
