@@ -522,15 +522,15 @@ function load_game {
     printf "\n\n\n      Saved Games:\n\n"
     readarray CHAR_SHEET_0 < "${SAVED_GAMES[$LINE]}"
     CHAR_0_SAVE=( ${CHAR_SHEET_0[0]} )
-    printf "\e[1;32m    %s - %s\e[m\n\n" ${SAVED_GAMES[LINE]##*/} "${CHAR_0_SAVE[1]//_/ }"
+    printf "\e[1;32m    %s - %s\e[m\n\n" "${SAVED_GAMES[LINE]##*/}" "${CHAR_0_SAVE[1]//_/ }"
     if [[ ${#SAVED_GAMES[*]} -gt 1 ]]; then
       readarray CHAR_SHEET_1 < "${SAVED_GAMES[$(($((LINE + 1)) % ${#SAVED_GAMES[*]}))]}"
       CHAR_1_SAVE=( ${CHAR_SHEET_1[0]} )
-      printf "    %s - %s\n\n" ${SAVED_GAMES[$(($((LINE + 1)) % ${#SAVED_GAMES[*]}))]##*/} "${CHAR_1_SAVE[1]//_/ }"
+      printf "    %s - %s\n\n" "${SAVED_GAMES[$(($((LINE + 1)) % ${#SAVED_GAMES[*]}))]##*/}" "${CHAR_1_SAVE[1]//_/ }"
       if [[ ${#SAVED_GAMES[*]} -gt 2 ]]; then
         readarray CHAR_SHEET_2 < "${SAVED_GAMES[$(($((LINE + 2)) % ${#SAVED_GAMES[*]}))]}"
         CHAR_2_SAVE=( ${CHAR_SHEET_2[0]} )
-        printf "    %s - %s\n\n\n" ${SAVED_GAMES[$(($((LINE + 2)) % ${#SAVED_GAMES[*]}))]##*/} "${CHAR_2_SAVE[1]//_/ }"
+        printf "    %s - %s\n\n\n" "${SAVED_GAMES[$(($((LINE + 2)) % ${#SAVED_GAMES[*]}))]##*/}" "${CHAR_2_SAVE[1]//_/ }"
       fi
     fi
     printf "\n\n  Press w to go up, s to go down, \n"
