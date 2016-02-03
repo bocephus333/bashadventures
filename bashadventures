@@ -510,7 +510,7 @@ function new_game {
 
 function load_game {
   SAVED_GAMES=( "${SAVES}"/* )
-  if [[ ! -d "${SAVES}" ]] || [[ ${#SAVED_GAMES[*]} -eq 0 ]]; then
+  if [[ ! -f ${#SAVED_GAMES[*]} ]] || [[ ! -d "${SAVES}" ]]; then
     printf "\033c"
     printf "%s\n\n" "${SWORD_IMAGE:=$(< images/sword)}"
     printf "  You have no saved games or your have chosen the wrong save directory.\n"
