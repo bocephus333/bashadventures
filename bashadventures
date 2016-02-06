@@ -10,8 +10,7 @@ done
 
 title_animation() {
   for (( LINES=5; LINES>0; LINES-- )); do
-    clear
-    #printf "\033c"
+    printf "\033c"
     eval printf "%.0s$'\n'" "{0..$LINES}"
     printf "%s\n" "${images[images/sword]}"
     ! read -r -t .2
