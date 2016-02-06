@@ -24,11 +24,11 @@ not_done() {
 }
 
 quit_prompt() {
-  printf "\033c"
   DISPLAY[11]="${DISPLAY[11]:0:19}┌─────────────────────┐${DISPLAY[11]:42}"
   DISPLAY[12]="${DISPLAY[12]:0:19}│    Are you sure     │${DISPLAY[12]:42}"
   DISPLAY[13]="${DISPLAY[13]:0:19}│ want to quit? (y|n) │${DISPLAY[13]:42}"
   DISPLAY[14]="${DISPLAY[14]:0:19}└─────────────────────┘${DISPLAY[14]:42}"
+  printf "\033c"
   printf "%s" "${DISPLAY[@]}"
   read -r -s -n 1 QUIT
   if [[ "${QUIT}" = 'y' ]]; then
@@ -86,7 +86,6 @@ cave_cliff() {
 }
 
 forest_trail_cave_night_1_move() {
-  printf "\033c"
   CHAR_SHEET[0]="save forest_trail_cave_night_1 $XCORD $YCORD\n"
   printf "%s" "${CHAR_SHEET[@]}" > "${SAVES}/${NAME}"
   Y=$((${YCORD:=23} - 1))
@@ -97,6 +96,7 @@ forest_trail_cave_night_1_move() {
   DISPLAY[$Y]="${MAP[$Y]:0:${X}}${MAP_HIDDEN[$Y]:${X}:3}@${MAP_HIDDEN[$Y]:$((X + 4)):3}${MAP[$Y]:$((X + 7))}"
   DISPLAY[$((Y + 1))]="${MAP[$((Y + 1))]:0:${X}}${MAP_HIDDEN[$((Y + 1))]:${X}:7}${MAP[$Y]:$((X + 7))}"
   DISPLAY[$((Y + 2))]="${MAP[$((Y + 2))]:0:${X}}${MAP_HIDDEN[$((Y + 2))]:${X}:7}${MAP[$Y]:$((X + 7))}"
+  printf "\033c"
   printf "%s" "${DISPLAY[@]}"
   printf "YCord: %s\n" "${YCORD}" #debug
   printf "XCord: %s\n" "${XCORD}" #debug
@@ -126,11 +126,11 @@ forest_trail_sign() {
 }
 
 forest_trail_night_1_move() {
-  printf "\033c"
   CHAR_SHEET[0]="save forest_trail_night_1 $XCORD $YCORD\n"
   printf "%s" "${CHAR_SHEET[@]}" > "${SAVES}/${NAME}"
   DISPLAY=( "${MAP[@]}" )
   DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
+  printf "\033c"
   printf "%s" "${DISPLAY[@]}"
   printf "YCord: %s\n" "${YCORD}" #debug
   printf "XCord: %s\n" "${XCORD}" #debug
@@ -169,13 +169,13 @@ forest_trail_night_1_move() {
 brookshire_night_watch_block_west() {
   PLACES=$((15 - NEW_YCORD))
   for (( PLACE=1; PLACE<=PLACES; PLACE++ )); do
-    printf "\033c"
     NEW_GUARD_PLACE=$((15 - PLACE))
     DISPLAY=( "${MAP[@]}" )
     DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
     DISPLAY[1]="${DISPLAY[1]:0:27}£${DISPLAY[1]:28}"
     DISPLAY[$((NEW_GUARD_PLACE - 1))]="${DISPLAY[$((NEW_GUARD_PLACE - 1))]:0:1}£${DISPLAY[$((NEW_GUARD_PLACE - 1))]:2}"
     DISPLAY[20]="${DISPLAY[20]:0:57}£${DISPLAY[20]:58}"
+    printf "\033c"
     printf "%s" "${DISPLAY[@]}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
@@ -186,13 +186,13 @@ brookshire_night_watch_block_west() {
   printf "Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"\n"
   read -r -s _
   for (( PLACE=PLACES; PLACE>=1; PLACE-- )); do
-    printf "\033c"
     NEW_GUARD_PLACE=$((15 - PLACE))
     DISPLAY=( "${MAP[@]}" )
     DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
     DISPLAY[1]="${DISPLAY[1]:0:27}£${DISPLAY[1]:28}"
     DISPLAY[$((NEW_GUARD_PLACE - 1))]="${DISPLAY[$((NEW_GUARD_PLACE - 1))]:0:1}£${DISPLAY[$((NEW_GUARD_PLACE - 1))]:2}"
     DISPLAY[20]="${DISPLAY[20]:0:57}£${DISPLAY[20]:58}"
+    printf "\033c"
     printf "%s" "${DISPLAY[@]}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
@@ -211,6 +211,7 @@ brookshire_night_watch_block_north() {
     DISPLAY[1]="${DISPLAY[1]:0:$NEW_GUARD_PLACE}£${DISPLAY[1]:$((NEW_GUARD_PLACE + 1))}"
     DISPLAY[14]="${DISPLAY[14]:0:1}£${DISPLAY[14]:2}"
     DISPLAY[20]="${DISPLAY[20]:0:57}£${DISPLAY[20]:58}"
+    printf "\033c"
     printf "%s" "${DISPLAY[@]}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
@@ -221,13 +222,13 @@ brookshire_night_watch_block_north() {
   printf "Night Watchman: \"Sorry, kid, no body leaves the village after dark.\"\n"
   read -r -s _
   for (( PLACE=PLACES; PLACE>=1; PLACE-- )); do
-    printf "\033c"
     NEW_GUARD_PLACE=$((PLACE + 27))
     DISPLAY=( "${MAP[@]}" )
     DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
     DISPLAY[1]="${DISPLAY[1]:0:$NEW_GUARD_PLACE}£${DISPLAY[1]:$((NEW_GUARD_PLACE + 1))}"
     DISPLAY[14]="${DISPLAY[14]:0:1}£${DISPLAY[14]:2}"
     DISPLAY[20]="${DISPLAY[20]:0:57}£${DISPLAY[20]:58}"
+    printf "\033c"
     printf "%s" "${DISPLAY[@]}"
     printf "YCord: %s\n" "${YCORD}" #debug
     printf "XCord: %s\n" "${XCORD}" #debug
@@ -397,12 +398,12 @@ angry_cow() {
 }
 
 stable_night_1_move() {
-  printf "\033c"
   CHAR_SHEET[0]="save stable_night_1 $XCORD $YCORD\n"
   printf "%s" "${CHAR_SHEET[0]}" > "${SAVES}/${NAME}"
   DISPLAY=( "${MAP[@]}" )
   DISPLAY[$((YCORD - 1))]="${DISPLAY[$((YCORD - 1))]:0:$XCORD}@${DISPLAY[$((YCORD - 1))]:$((XCORD + 1))}"
   DISPLAY[6]="${DISPLAY[6]:0:22}&${DISPLAY[6]:23}"
+  printf "\033c"
   printf "%s" "${DISPLAY[@]}"
   printf "\nQuick! Run out of the stable and get away from the stable master!\n"
   printf "YCord: %s\n" "${YCORD}" #debug
@@ -576,9 +577,9 @@ load_game() {
 }
 
 main_menu() {
-  printf "\033c"
   MENU=( 'New' 'Load' 'Credits' 'Quit' )
   MENU_OPTION=${MENU_OPTION:=0}
+  printf "\033c"
   printf "%s\n\n" "${SWORD_IMAGE:=$(< images/sword)}"
   if [[ ${MENU[$MENU_OPTION]} = 'New' ]]; then
     printf "                              \e[1;32m1. New Game\e[m\n\n"
