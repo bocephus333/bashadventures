@@ -3,11 +3,12 @@
 
 set -o pipefail -o errexit
 
-declare -A images
-for image in images/*; do
-  images[$image]="$(< $image)"
-done
-
+load_images() {
+  declare -g -A images
+  for image in images/*; do
+    images[$image]="$(< $image)"
+  done
+}
 title_animation() {
   for (( LINES=5; LINES>0; LINES-- )); do
     printf "\033c"
@@ -20,7 +21,7 @@ title_animation() {
 
 not_done() {
   printf "\033c"
-  printf "%s\n" "${SWORD_IMAGE:=$(< images/sword)}"
+  printf "%s\n" "${images[images/sword]}"
   printf "                        \033[1;31mThis feature is not"
   printf "                        currently implemented"
   printf "                        press enter to go"
@@ -74,9 +75,16 @@ movement() {
   printf "%s %s %s" "${NEW_XCORD}" "${NEW_YCORD}" "${QUIT}"
 }
 
+show_image() {
+  local image="${1}" text="${2}"
+  printf "\033c"
+  printf "%s\n" "${image}"
+  printf "%s" "${text}"
+}
+
 spider_no_weapon() {
   printf "\033c"
-  printf "%s\n" "${images[spider]}"
+  printf "%s\n" "${images[images/spider]}"
   printf "You see a large and very dangerous looking spider.\n"
   printf "Without a weapon you dare not get any closer.\n"
   read -r -s _
@@ -84,7 +92,7 @@ spider_no_weapon() {
 
 cave_cliff() {
   printf "\033c"
-  printf "%s\n" "${CAVE_CLIFF_IMAGE:=$(< images/cave_cliff)}"
+  printf "%s\n" "${images[images/cave_cliff]}"
   printf "\n\nThis cliff is too high for you to reach the ledge.\n"
   printf "Maybe there is another way out.\n"
   read -r -s _
@@ -117,9 +125,13 @@ forest_trail_cave_night_1_move() {
       XCORD="${NEW_XCORD}"
       YCORD="${NEW_YCORD}";;
     '┬')
-      cave_cliff;;
+      local text="\n\nThis cliff is too high for you to reach the ledge.\n"
+      text="${text}Maybe there is another way out.\n"
+      show_image "${images[images/cave_cliff]}" "${text}";;
     'ж')
-      spider_no_weapon;;
+      local text="You see a large and very dangerous looking spider.\n"
+      text="${text}Without a weapon you dare not get any closer.\n"
+      show_image "${images[images/spider]}" "${text}";;
   esac
   forest_trail_cave_night_1_move
 }
@@ -151,9 +163,11 @@ forest_trail_night_1_move() {
     XCORD=$NEW_XCORD
     YCORD=$NEW_YCORD;;
   'ф')
-    forest_trail_sign;;
+    show_image "${images[images/forest_trail_sign]}";;
   'ж')
-    spider_no_weapon;;
+    local text="You see a large and very dangerous looking spider.\n"
+    text="${text}Without a weapon you dare not get any closer.\n"
+    show_image "${images[images/spider]}" "${text}";;
   'Ʌ')
     YCORD=23
     XCORD=25
@@ -332,7 +346,7 @@ brookshire_night_1_move() {
       XCORD=${NEW_XCORD:=XCORD}
       YCORD=${NEW_YCORD:=YCORD};;
     'F')
-      brookshire_barn_door_night_1;;
+      show_image "${images[images/barn_night]}";;
     'e')
       YCORD=10
       XCORD=2
@@ -340,10 +354,8 @@ brookshire_night_1_move() {
       readarray MAP_TERRIAN < places/forest_trail_night_1_terrian
       forest_trail_night_1_move;;
     'G')
-      printf "\033c"
-      printf "%s\n" "${NIGHT_WATCH_IMAGE:=$(< images/night_watch)}"
-      printf "Night Watchman: \"Quit bugging me and go home, kid.\"\n"
-      read -r -s _;;
+      local text="Night Watchman: \"Quit bugging me and go home, kid.\"\n"
+      show_image "${images[images/night_watch]}" "${text}";;
     'c')
       brookshire_sign_temple;;
     'C')
@@ -653,6 +665,7 @@ main() {
     esac
   done
   SAVES="${SAVES:=${HOME}/.bashadventures}"
+  load_images
   title_animation
   main_menu
 }
